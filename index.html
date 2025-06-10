@@ -10,9 +10,7 @@
         body {
             font-family: 'Inter', sans-serif;
             overflow: hidden; 
-            
         }
-      
         .heart {
             position: absolute;
             cursor: pointer;
@@ -33,7 +31,7 @@
 
         
         .heart-clicked {
-            animation: popAndFade 0.3.2s forwards;
+            animation: popAndFade 0.25s forwards;
         }
 
         @keyframes popAndFade {
@@ -45,6 +43,9 @@
 </head>
 <body class="bg-gradient-to-br from-purple-400 via-pink-500 to-red-500 min-h-screen flex flex-col items-center justify-center text-white p-4">
 
+    <audio id="audioPositivo" src="som_positivo.mp3" preload="auto"></audio>
+    <audio id="audioNegativo" src="som_negativo.mp3" preload="auto"></audio>
+
     <div id="game-container" class="relative w-full max-w-4xl h-[calc(100vh-120px)] bg-white bg-opacity-20 rounded-2xl shadow-xl flex flex-col items-center justify-center overflow-hidden border-4 border-white border-opacity-30">
 
         <div id="header-area" class="absolute top-4 left-0 right-0 flex flex-col items-center z-20 space-y-2 px-2"> 
@@ -52,12 +53,29 @@
             <div id="message-display" class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-center drop-shadow-lg p-2 rounded-lg bg-black bg-opacity-30 max-w-xl mx-auto">
                 Clique nos corações!
             </div>
-            <div id="timer-display" class="bg-white bg-opacity-30 text-white text-lg sm:text-xl font-bold py-1 px-4 rounded-full shadow-md">Tempo: 90s</div>
+            <div id="timer-display" class="bg-white bg-opacity-30 text-white text-lg sm:text-xl font-bold py-1 px-4 rounded-full shadow-md">Tempo: 60s</div>
+        </div>
+        
+        <div id="pre-game-intro" class="absolute inset-0 bg-black bg-opacity-70 flex flex-col items-center justify-center p-4 rounded-2xl z-40">
+            <h2 class="text-3xl sm:text-5xl font-extrabold text-pink-300 text-center mb-6 drop-shadow-2xl">
+                Feliz Dia dos Namorados, meu Amor!
+            </h2>
+            <p class="text-lg sm:text-xl md:text-2xl font-bold text-white text-center mb-8 max-w-2xl leading-relaxed">
+                Neste jogo, você terá **60 segundos** para clicar em corações e revelar uma mensagem secreta sobre o nosso amor!
+                <br><br>
+                ❤️ Corações vermelhos: Ganhe **1 ponto** e revele parte da mensagem.
+                <br>
+                💔 Corações partidos: Cuidado! Você perde **2 pontos**.
+                <br><br>
+                Tente alcançar **30 pontos** para uma mensagem bônus especial, e se conseguir **50 pontos**, uma surpresa deliciosa te espera!
+                <br><br>
+                Pronta para desvendar nosso amor?
+            </p>
+            <button id="start-button" class="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 sm:py-4 sm:px-8 rounded-full shadow-lg transform transition-transform duration-200 hover:scale-105 text-xl sm:text-2xl">
+                Começar o Jogo!
+            </button>
         </div>
 
-        <button id="start-button" class="mt-auto mb-auto bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 sm:py-4 sm:px-8 rounded-full shadow-lg transform transition-transform duration-200 hover:scale-105 text-xl sm:text-2xl z-30">
-            Começar o Jogo!
-        </button>
 
         <div id="final-message-overlay" class="absolute inset-0 bg-black bg-opacity-70 flex flex-col items-center justify-center p-4 rounded-2xl hidden z-40">
             <h2 class="text-3xl sm:text-5xl lg:text-6xl font-extrabold text-pink-300 text-center mb-4 sm:mb-6 drop-shadow-2xl">
@@ -70,11 +88,7 @@
             </button>
         </div>
 
-        <div id="instruction-message" class="text-base sm:text-lg md:text-xl text-center text-white bg-black bg-opacity-40 p-3 sm:p-4 rounded-lg mt-auto mb-auto">
-            A cada clique, uma parte da mensagem secreta será revelada! Cuidado com os corações quebrados!
         </div>
-
-    </div>
 
     <div id="custom-modal-container" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 hidden p-4">
         <div class="bg-white p-6 sm:p-8 rounded-xl shadow-2xl text-gray-800 text-center max-w-sm w-full">
@@ -89,89 +103,87 @@
         const scoreDisplay = document.getElementById('score-display');
         const messageDisplay = document.getElementById('message-display');
         const timerDisplay = document.getElementById('timer-display');
+        const preGameIntro = document.getElementById('pre-game-intro'); 
         const startButton = document.getElementById('start-button');
-        const instructionMessage = document.getElementById('instruction-message');
         const finalMessageOverlay = document.getElementById('final-message-overlay');
         const fullLoveMessageDisplay = document.getElementById('full-love-message');
         const restartButton = document.getElementById('restart-button');
         const customModalContainer = document.getElementById('custom-modal-container');
         const customModalText = document.getElementById('custom-modal-text');
         const customModalCloseButton = document.getElementById('custom-modal-close');
-        
         const headerArea = document.getElementById('header-area'); 
 
-       
+        const audioPositivo = document.getElementById('audioPositivo');
+        const audioNegativo = document.getElementById('audioNegativo');
+
+        // --- Configurações do Jogo ---
         let score = 0;
-        let gameDuration = 90; // 
+        let gameDuration = 60; // Segundos
         let timeRemaining = gameDuration;
         let heartInterval;
         let timerInterval;
         let currentMessageIndex = 0;
-        
-        const loveMessage = "NATHALIA VOCÊ FAZ MINHA VIDA MAIS COLORIDA, TE AMO!";
-       
+        const loveMessage = "VOCÊ FAZ MINHA VIDA MAIS COLORIDA, TE AMO!";
         const messageParts = loveMessage.split(' ');
-        let heartsOnScreen = 0; 
-        const maxHearts = 10; 
-        const limiteDePontosParaMensagemSecreta = 50; 
-        const limiteDePontosParaValeSushi = 75; 
+        let heartsOnScreen = 0;
+        const maxHearts = 10;
+        const limiteDePontosParaMensagemSecreta = 30;
+        const limiteDePontosParaValeSushi = 50;
 
+        // Função para mostrar um modal personalizado (substitui alert())
         function showModal(message) {
             customModalText.textContent = message;
             customModalContainer.classList.remove('hidden');
         }
 
-      
+        // Event listener para fechar o modal
         customModalCloseButton.addEventListener('click', () => {
             customModalContainer.classList.add('hidden');
         });
 
-        
+        // Função para tocar um som
+        function playSound(audioElement) {
+            audioElement.currentTime = 0;
+            audioElement.play();
+        }
+
+        // Função para criar um coração
         function createHeart() {
             if (heartsOnScreen >= maxHearts) {
-                return; 
+                return;
             }
 
             const heart = document.createElement('div');
-            
-            const isGoodHeart = Math.random() < 0.7; // 
+            const isGoodHeart = Math.random() < 0.6; // Probabilidade de ser um coração bom
 
-            
             if (isGoodHeart) {
-                heart.classList.add('bg-rose-500'); 
-                heart.textContent = '❤️'; 
-                heart.dataset.type = 'good'; 
+                heart.classList.add('bg-rose-500');
+                heart.textContent = '❤️';
+                heart.dataset.type = 'good';
             } else {
-                heart.classList.add('bg-gray-700', 'text-gray-300'); 
-                heart.textContent = '💔'; 
-                heart.dataset.type = 'bad'; 
+                heart.classList.add('bg-gray-700', 'text-gray-300');
+                heart.textContent = '💔';
+                heart.dataset.type = 'bad';
             }
 
-            
             heart.classList.add('heart', 'absolute', 'rounded-full', 'flex', 'items-center', 'justify-center', 'text-white', 'font-bold', 'select-none', 'text-4xl', 'sm:text-5xl', 'shadow-lg');
             heart.style.width = '60px';
             heart.style.height = '60px';
 
-
-            
             const containerRect = gameContainer.getBoundingClientRect();
-            const heartSize = 65; // 
-            const padding = 10; 
+            const heartSize = 60;
+            const padding = 10;
 
-     
-            const currentHeaderHeight = headerArea.offsetHeight + 10; // Adiciona uma pequena margem extra
+            const currentHeaderHeight = headerArea.offsetHeight + 10; 
             
             const minX = padding;
             const maxX = containerRect.width - heartSize - padding;
-           
-            const minY = currentHeaderHeight + padding; 
+            let minY = currentHeaderHeight + padding; 
             const maxY = containerRect.height - heartSize - padding; 
 
-          
             if (minY >= maxY) {
                 minY = Math.max(minY, containerRect.height - heartSize - padding - 20); 
             }
-
 
             const randomX = Math.random() * (maxX - minX) + minX;
             const randomY = Math.random() * (maxY - minY) + minY;
@@ -179,14 +191,12 @@
             heart.style.left = `${randomX}px`;
             heart.style.top = `${randomY}px`;
 
-           
             gameContainer.appendChild(heart);
             heartsOnScreen++;
 
-            
             const lifetime = setTimeout(() => {
                 if (heart.parentNode) {
-                    heart.classList.add('heart-clicked'); 
+                    heart.classList.add('heart-clicked');
                     heart.addEventListener('animationend', () => {
                         if (heart.parentNode) {
                             heart.parentNode.removeChild(heart);
@@ -194,45 +204,42 @@
                         }
                     }, { once: true });
                 }
-            }, 3000); 
+            }, 2000);
 
-            
             heart.addEventListener('click', (event) => {
                 const heartType = event.target.dataset.type;
 
                 if (heartType === 'good') {
                     score++;
-                   
+                    playSound(audioPositivo);
                     if (currentMessageIndex < messageParts.length) {
                         const revealedPart = messageParts.slice(0, currentMessageIndex + 1).join(' ');
                         messageDisplay.textContent = revealedPart;
                         currentMessageIndex++;
                     } else {
-                        
                         messageDisplay.textContent = loveMessage;
                     }
                 } else if (heartType === 'bad') {
-                    score = Math.max(0, score - 2); 
+                    score = Math.max(0, score - 2);
+                    playSound(audioNegativo);
                     showModal("Oh não! Coração partido! Você perdeu 2 pontos.");
                 }
 
                 scoreDisplay.textContent = `Pontos: ${score}`;
 
-                
-                heart.classList.add('heart-clicked'); 
-                clearTimeout(lifetime); 
+                heart.classList.add('heart-clicked');
+                clearTimeout(lifetime);
 
-                
                 heart.addEventListener('animationend', () => {
                     if (heart.parentNode) {
                         heart.parentNode.removeChild(heart);
                         heartsOnScreen--;
                     }
-                }, { once: true }); 
+                }, { once: true });
             });
         }
 
-        
+        // Função para iniciar o jogo (modificada para esconder a introdução)
         function startGame() {
             score = 0;
             timeRemaining = gameDuration;
@@ -243,20 +250,18 @@
             messageDisplay.textContent = "Clique nos corações!";
             timerDisplay.textContent = `Tempo: ${timeRemaining}s`;
 
-            startButton.classList.add('hidden'); 
-            instructionMessage.classList.add('hidden'); 
-            finalMessageOverlay.classList.add('hidden'); 
-            
+            // NOVO: Esconde a tela de introdução
+            preGameIntro.classList.add('hidden'); 
+            // REMOVIDO: startButton.classList.add('hidden');
+            // REMOVIDO: instructionMessage.classList.add('hidden');
+            finalMessageOverlay.classList.add('hidden');
             
             gameContainer.style.height = `calc(100vh - 120px)`; 
 
-            
             gameContainer.querySelectorAll('.heart').forEach(h => h.remove());
 
-         
-            heartInterval = setInterval(createHeart, 750);
+            heartInterval = setInterval(createHeart, 600);
 
-          
             timerInterval = setInterval(() => {
                 timeRemaining--;
                 timerDisplay.textContent = `Tempo: ${timeRemaining}s`;
@@ -267,12 +272,11 @@
             }, 1000);
         }
 
-      
+        // Função para finalizar o jogo
         function endGame() {
             clearInterval(heartInterval);
             clearInterval(timerInterval);
 
-           
             gameContainer.querySelectorAll('.heart').forEach(heart => {
                 heart.classList.add('heart-clicked');
                 heart.addEventListener('animationend', () => {
@@ -282,11 +286,10 @@
                 }, { once: true });
             });
 
-           
             showFinalMessage();
         }
 
-       
+        // Função para exibir a tela de mensagem final
         function showFinalMessage() {
             let finalMessageHtml = `
                 <span class="text-purple-200">Você é a luz do meu dia, a razão do meu sorriso.</span><br>
@@ -294,21 +297,19 @@
                 <span class="text-rose-200">Com todo o meu amor, Seu Noivo Kadu!</span>
             `;
 
-            
             if (score >= limiteDePontosParaValeSushi) {
                 finalMessageHtml += `
                     <br><br>
                     <span class="text-green-300 text-2xl sm:text-3xl font-extrabold animate-pulse">
-                        🍣 VOCÊ GANHOU UM VALE-SUSHI! 🍣
+                        🍣 VOCÊ GANHOU UM VALE-SUSHI E 1 HORA DAQUELA MASSAGEM ESPECIAL! 🍣
                     </span>
                     <span class="text-white text-lg sm:text-xl mt-4">
                         Parabéns, meu amor! Sua dedicação foi recompensada! 
-                        Prepare-se para uma noite deliciosa, o sushi é por minha conta! 
-                        Você merece todo o sabor e carinho do mundo. Te amo!
+                        Prepare-se para um jantar com um sushi maravilhoso! 
+                        Mas não se esqueça que você será a sombrimesa!
                     </span>
                 `;
             } else if (score >= limiteDePontosParaMensagemSecreta) {
-                // Mensagem secreta padrão se atingir 50+ mas menos que 75
                 finalMessageHtml += `
                     <br><br>
                     <span class="text-yellow-300 text-2xl sm:text-3xl font-extrabold animate-pulse">
@@ -317,11 +318,12 @@
                     <span class="text-white text-lg sm:text-xl mt-4">
                         Cada ponto que você fez é um momento de alegria que vivemos juntos. 
                         Este jogo é um lembrete do quanto sua alegria ilumina a minha vida. 
+                        Obrigado por cada risada, cada abraço, cada 'eu te amo'.
+                        Você é meu maior presente, hoje e sempre!
                         Feliz Dia dos Namorados, meu amor!
                     </span>
                 `;
             } else {
-               
                 finalMessageHtml += `
                     <br><br>
                     <span class="text-blue-300 text-2xl sm:text-3xl font-extrabold">
@@ -335,22 +337,19 @@
             }
 
             fullLoveMessageDisplay.innerHTML = finalMessageHtml;
-            finalMessageOverlay.classList.remove('hidden'); 
-            finalMessageOverlay.classList.add('flex'); 
+            finalMessageOverlay.classList.remove('hidden');
+            finalMessageOverlay.classList.add('flex');
         }
 
 
-    
+        // Event listeners para os botões
         startButton.addEventListener('click', startGame);
         restartButton.addEventListener('click', startGame);
 
-        
         function adjustGameContainerSize() {
-            
             gameContainer.style.height = `calc(100vh - 120px)`; 
         }
 
-       
         window.addEventListener('load', adjustGameContainerSize);
         window.addEventListener('resize', adjustGameContainerSize);
 
