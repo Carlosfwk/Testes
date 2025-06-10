@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Um Jogo de Amor para Você! ❤️</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            overflow: hidden; /* Evita barras de rolagem */
+            /* A altura mínima da tela cheia já está na classe Tailwind no body */
+        }
+        /* Estilo básico para o coração - pode ser um emoji, SVG ou div estilizada */
+        .heart {
+            position: absolute;
+            cursor: pointer;
+            user-select: none;
+            transition: transform 0.1s ease-out, opacity 0.3s ease-out;
+            z-index: 10; /* Garante que os corações fiquem acima do fundo */
+            animation: fadeInOut 2s forwards; /* Animação para corações aparecerem e sumirem */
+            touch-action: manipulation; /* Otimiza para toque, evita delay de 300ms */
+        }
+
+        /* Animação para o coração desaparecer suavemente após um tempo */
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: scale(0.5); }
+            20% { opacity: 1; transform: scale(1); }
+            80% { opacity: 1; transform: scale(1); }
+            100% { opacity: 0; transform: scale(0.5); }
+        }
+
+        /* Animação para o coração quando clicado */
+        .heart-clicked {
+            animation: popAndFade 0.3.2s forwards;
+        }
+
+        @keyframes popAndFade {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.3); opacity: 0.8; }
+            100% { transform: scale(0.5); opacity: 0; }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-purple-400 via-pink-500 to-red-500 min-h-screen flex flex-col items-center justify-center text-white p-4">
+
+    <div id="game-container" class="relative w-full max-w-4xl h-[calc(100vh-120px)] bg-white bg-opacity-20 rounded-2xl shadow-xl flex flex-col items-center justify-center overflow-hidden border-4 border-white border-opacity-30">
+
+        <div id="header-area" class="absolute top-4 left-0 right-0 flex flex-col items-center z-20 space-y-2 px-2"> 
+            <div id="score-display" class="bg-white bg-opacity-30 text-white text-xl sm:text-2xl font-bold py-1 px-4 sm:py-2 sm:px-6 rounded-full shadow-lg">Pontos: 0</div>
+            <div id="message-display" class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-center drop-shadow-lg p-2 rounded-lg bg-black bg-opacity-30 max-w-xl mx-auto">
+                Clique nos corações!
+            </div>
+            <div id="timer-display" class="bg-white bg-opacity-30 text-white text-lg sm:text-xl font-bold py-1 px-4 rounded-full shadow-md">Tempo: 60s</div>
+        </div>
+
+        <button id="start-button" class="mt-auto mb-auto bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 sm:py-4 sm:px-8 rounded-full shadow-lg transform transition-transform duration-200 hover:scale-105 text-xl sm:text-2xl z-30">
+            Começar o Jogo!
+        </button>
+
+        <div id="final-message-overlay" class="absolute inset-0 bg-black bg-opacity-70 flex flex-col items-center justify-center p-4 rounded-2xl hidden z-40">
+            <h2 class="text-3xl sm:text-5xl lg:text-6xl font-extrabold text-pink-300 text-center mb-4 sm:mb-6 drop-shadow-2xl">
+                Você é Incrível!
+            </h2>
+            <p id="full-love-message" class="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-white text-center mb-6 sm:mb-8 max-w-2xl leading-relaxed">
+                </p>
+            <button id="restart-button" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-5 sm:py-3 sm:px-6 rounded-full shadow-lg transform transition-transform duration-200 hover:scale-105 text-lg sm:text-xl">
+                Jogar Novamente
+            </button>
+        </div>
+
+        <div id="instruction-message" class="text-base sm:text-lg md:text-xl text-center text-white bg-black bg-opacity-40 p-3 sm:p-4 rounded-lg mt-auto mb-auto">
+            A cada clique, uma parte da mensagem secreta será revelada! Cuidado com os corações quebrados!
+        </div>
+
+    </div>
+
+    <div id="custom-modal-container" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 hidden p-4">
+        <div class="bg-white p-6 sm:p-8 rounded-xl shadow-2xl text-gray-800 text-center max-w-sm w-full">
+            <p id="custom-modal-text" class="text-lg sm:text-xl mb-4"></p>
+            <button id="custom-modal-close" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-5 rounded-full text-base sm:text-lg">OK</button>
+        </div>
+    </div>
+
+
+    <script>
+        const gameContainer = document.getElementById('game-container');
+        const scoreDisplay = document.getElementById('score-display');
+        const messageDisplay = document.getElementById('message-display');
+        const timerDisplay = document.getElementById('timer-display');
+        const startButton = document.getElementById('start-button');
+        const instructionMessage = document.getElementById('instruction-message');
+        const finalMessageOverlay = document.getElementById('final-message-overlay');
+        const fullLoveMessageDisplay = document.getElementById('full-love-message');
+        const restartButton = document.getElementById('restart-button');
+        const customModalContainer = document.getElementById('custom-modal-container');
+        const customModalText = document.getElementById('custom-modal-text');
+        const customModalCloseButton = document.getElementById('custom-modal-close');
+        // NOVO: Referência ao div do cabeçalho
+        const headerArea = document.getElementById('header-area'); 
+
+        // --- Configurações do Jogo ---
+        let score = 0;
+        let gameDuration = 60; // Segundos
+        let timeRemaining = gameDuration;
+        let heartInterval;
+        let timerInterval;
+        let currentMessageIndex = 0;
+        // Personalize o nome da sua noiva aqui!
+        const loveMessage = "VOCÊ FAZ MINHA VIDA MAIS COLORIDA, TE AMO!";
+        // Divide a mensagem em palavras ou partes menores para revelar gradualmente
+        const messageParts = loveMessage.split(' ');
+        let heartsOnScreen = 0; // Contador de corações na tela
+        const maxHearts = 10; // Número máximo de corações simultâneos
+        const limiteDePontosParaMensagemSecreta = 50; // Limite de pontos para a mensagem secreta
+        const limiteDePontosParaValeSushi = 75; // Limite de pontos para o vale sushi
+
+        // Altura da área do cabeçalho que os corações devem evitar
+        // REMOVIDO: const headerAreaHeight = 120; // Ajustado para ser mais genérico para diferentes telas
+
+        // Função para mostrar um modal personalizado (substitui alert())
+        function showModal(message) {
+            customModalText.textContent = message;
+            customModalContainer.classList.remove('hidden');
+        }
+
+        // Event listener para fechar o modal
+        customModalCloseButton.addEventListener('click', () => {
+            customModalContainer.classList.add('hidden');
+        });
+
+        // Função para criar um coração
+        function createHeart() {
+            if (heartsOnScreen >= maxHearts) {
+                return; // Não cria mais corações se o limite for atingido
+            }
+
+            const heart = document.createElement('div');
+            // Aleatoriamente decide o tipo de coração: 60% bom, 40% ruim
+            const isGoodHeart = Math.random() < 0.7; // Probabilidade de ser um coração bom
+
+            // Estilos e atributos baseados no tipo de coração
+            if (isGoodHeart) {
+                heart.classList.add('bg-rose-500'); // Coração vermelho
+                heart.textContent = '❤️'; // Emoji de coração bom
+                heart.dataset.type = 'good'; // Atributo para identificar o tipo
+            } else {
+                heart.classList.add('bg-gray-700', 'text-gray-300'); // Coração cinza/escuro
+                heart.textContent = '💔'; // Emoji de coração partido
+                heart.dataset.type = 'bad'; // Atributo para identificar o tipo
+            }
+
+            // Classes Tailwind comuns para todos os corações
+            heart.classList.add('heart', 'absolute', 'rounded-full', 'flex', 'items-center', 'justify-center', 'text-white', 'font-bold', 'select-none', 'text-4xl', 'sm:text-5xl', 'shadow-lg');
+            heart.style.width = '60px'; // Tamanho fixo do coração (pode ser ajustado com responsividade se necessário)
+            heart.style.height = '60px';
+
+
+            // Posição aleatória dentro do gameContainer
+            const containerRect = gameContainer.getBoundingClientRect();
+            const heartSize = 60; // Tamanho do coração em pixels
+            const padding = 10; // Margem para não tocar nas bordas
+
+            // NOVO: Obter a altura real do cabeçalho dinamicamente
+            const currentHeaderHeight = headerArea.offsetHeight + 10; // Adiciona uma pequena margem extra
+            
+            const minX = padding;
+            const maxX = containerRect.width - heartSize - padding;
+            // NOVO: Usa a altura real do cabeçalho para minY
+            const minY = currentHeaderHeight + padding; 
+            const maxY = containerRect.height - heartSize - padding; 
+
+            // Garante que maxY seja maior que minY para evitar posições inválidas
+            if (minY >= maxY) {
+                // Se o espaço disponível for muito pequeno, ajusta minY ou não cria o coração
+                // Aqui, vamos garantir que o coração sempre apareça se houver espaço mínimo.
+                // Isso pode ser ajustado para não criar corações se não houver espaço suficiente.
+                minY = Math.max(minY, containerRect.height - heartSize - padding - 20); // Garante um mínimo de espaço
+            }
+
+
+            const randomX = Math.random() * (maxX - minX) + minX;
+            const randomY = Math.random() * (maxY - minY) + minY;
+
+            heart.style.left = `${randomX}px`;
+            heart.style.top = `${randomY}px`;
+
+            // Adiciona o coração ao container do jogo
+            gameContainer.appendChild(heart);
+            heartsOnScreen++;
+
+            // Define um tempo de vida para o coração desaparecer se não for clicado
+            const lifetime = setTimeout(() => {
+                if (heart.parentNode) {
+                    heart.classList.add('heart-clicked'); // Adiciona a animação de desaparecimento
+                    heart.addEventListener('animationend', () => {
+                        if (heart.parentNode) {
+                            heart.parentNode.removeChild(heart);
+                            heartsOnScreen--;
+                        }
+                    }, { once: true }); // Executa a animação apenas uma vez
+                }
+            }, 3000); // Coração desaparece em 2 segundos se não for clicado
+
+            // Adiciona evento de clique
+            heart.addEventListener('click', (event) => {
+                const heartType = event.target.dataset.type;
+
+                if (heartType === 'good') {
+                    score++;
+                    // Revela a próxima parte da mensagem apenas para corações bons
+                    if (currentMessageIndex < messageParts.length) {
+                        const revealedPart = messageParts.slice(0, currentMessageIndex + 1).join(' ');
+                        messageDisplay.textContent = revealedPart;
+                        currentMessageIndex++;
+                    } else {
+                        // Se a mensagem já foi totalmente revelada, mantém a última parte ou exibe algo diferente
+                        messageDisplay.textContent = loveMessage;
+                    }
+                } else if (heartType === 'bad') {
+                    score = Math.max(0, score - 2); // Subtrai 2 pontos, mas não deixa a pontuação negativa
+                    showModal("Oh não! Coração partido! Você perdeu 2 pontos.");
+                }
+
+                scoreDisplay.textContent = `Pontos: ${score}`;
+
+                // Efeito visual ao clicar
+                heart.classList.add('heart-clicked'); // Adiciona a animação de pop e fade
+                clearTimeout(lifetime); // Limpa o timeout de desaparecimento natural
+
+                // Remove o coração após a animação de clique
+                heart.addEventListener('animationend', () => {
+                    if (heart.parentNode) {
+                        heart.parentNode.removeChild(heart);
+                        heartsOnScreen--;
+                    }
+                }, { once: true }); // O 'once: true' garante que o listener seja removido após uma execução
+            });
+        }
+
+        // Função para iniciar o jogo
+        function startGame() {
+            score = 0;
+            timeRemaining = gameDuration;
+            currentMessageIndex = 0;
+            heartsOnScreen = 0;
+
+            scoreDisplay.textContent = `Pontos: ${score}`;
+            messageDisplay.textContent = "Clique nos corações!";
+            timerDisplay.textContent = `Tempo: ${timeRemaining}s`;
+
+            startButton.classList.add('hidden'); // Esconde o botão de iniciar
+            instructionMessage.classList.add('hidden'); // Esconde a mensagem de instrução
+            finalMessageOverlay.classList.add('hidden'); // Esconde a mensagem final se estiver visível
+            
+            // Garante que o game container esteja visível e responsivo
+            gameContainer.style.height = `calc(100vh - 120px)`; // Re-aplica a altura para o caso de ter sido alterada
+
+            // Remove todos os corações existentes antes de iniciar
+            gameContainer.querySelectorAll('.heart').forEach(h => h.remove());
+
+            // Intervalo para criar novos corações (a cada 0.6 segundos)
+            heartInterval = setInterval(createHeart, 600);
+
+            // Intervalo do temporizador
+            timerInterval = setInterval(() => {
+                timeRemaining--;
+                timerDisplay.textContent = `Tempo: ${timeRemaining}s`;
+
+                if (timeRemaining <= 0) {
+                    endGame();
+                }
+            }, 1000);
+        }
+
+        // Função para finalizar o jogo
+        function endGame() {
+            clearInterval(heartInterval); // Para de criar corações
+            clearInterval(timerInterval); // Para o temporizador
+
+            // Remove quaisquer corações que ainda estejam na tela
+            gameContainer.querySelectorAll('.heart').forEach(heart => {
+                heart.classList.add('heart-clicked');
+                heart.addEventListener('animationend', () => {
+                    if (heart.parentNode) {
+                        heart.parentNode.removeChild(heart);
+                    }
+                }, { once: true });
+            });
+
+            // Exibe a mensagem final
+            showFinalMessage();
+        }
+
+        // Função para exibir a tela de mensagem final
+        function showFinalMessage() {
+            let finalMessageHtml = `
+                <span class="text-purple-200">Você é a luz do meu dia, a razão do meu sorriso.</span><br>
+                <span class="text-pink-200">${loveMessage}</span><br>
+                <span class="text-rose-200">Com todo o meu amor, Seu Noivo Kadu!</span>
+            `;
+
+            // Verifica a pontuação para a mensagem de vale-sushi
+            if (score >= limiteDePontosParaValeSushi) {
+                finalMessageHtml += `
+                    <br><br>
+                    <span class="text-green-300 text-2xl sm:text-3xl font-extrabold animate-pulse">
+                        🍣 VOCÊ GANHOU UM VALE-SUSHI! 🍣
+                    </span>
+                    <span class="text-white text-lg sm:text-xl mt-4">
+                        Parabéns, meu amor! Sua dedicação foi recompensada! 
+                        Prepare-se para uma noite deliciosa, o sushi é por minha conta! 
+                        Você merece todo o sabor e carinho do mundo. Te amo!
+                    </span>
+                `;
+            } else if (score >= limiteDePontosParaMensagemSecreta) {
+                // Mensagem secreta padrão se atingir 50+ mas menos que 75
+                finalMessageHtml += `
+                    <br><br>
+                    <span class="text-yellow-300 text-2xl sm:text-3xl font-extrabold animate-pulse">
+                        ⭐ BÔNUS! VOCÊ DESBLOQUEOU UMA MENSAGEM SECRETA! ⭐
+                    </span>
+                    <span class="text-white text-lg sm:text-xl mt-4">
+                        Cada ponto que você fez é um momento de alegria que vivemos juntos. 
+                        Este jogo é um lembrete do quanto sua alegria ilumina a minha vida. 
+                        Obrigado por cada risada, cada abraço, cada 'eu te amo'.
+                        Você é meu maior presente, hoje e sempre!
+                        Feliz Dia dos Namorados, meu amor!
+                    </span>
+                `;
+            } else {
+                // Mensagem de curiosidade se não atingir 50 pontos
+                finalMessageHtml += `
+                    <br><br>
+                    <span class="text-blue-300 text-2xl sm:text-3xl font-extrabold">
+                        🤔 Faltou pouco para uma mensagem super secreta! 🤔
+                    </span>
+                    <span class="text-white text-lg sm:text-xl mt-4">
+                        Tente novamente e supere os ${limiteDePontosParaMensagemSecreta} pontos para descobrir o que te espera! 
+                        Seu amor é um enigma que adoro desvendar! ❤️
+                    </span>
+                `;
+            }
+
+            fullLoveMessageDisplay.innerHTML = finalMessageHtml;
+            finalMessageOverlay.classList.remove('hidden'); // Mostra a sobreposição
+            finalMessageOverlay.classList.add('flex'); // Garante que use flexbox para centralizar
+        }
+
+
+        // Event listeners para os botões
+        startButton.addEventListener('click', startGame);
+        restartButton.addEventListener('click', startGame);
+
+        // Ajustar o tamanho do container do jogo dinamicamente
+        function adjustGameContainerSize() {
+            // A altura do game-container já está definida com calc(100vh - 120px) no HTML,
+            // que já é responsivo. Garantimos que o script não sobrescreva sem necessidade.
+            // Apenas para fins de consistência e para garantir que o cálculo inicial seja correto.
+            gameContainer.style.height = `calc(100vh - 120px)`; 
+        }
+
+        // Chama a função ao carregar e redimensionar a janela
+        window.addEventListener('load', adjustGameContainerSize);
+        window.addEventListener('resize', adjustGameContainerSize);
+
+    </script>
+</body>
+</html>
