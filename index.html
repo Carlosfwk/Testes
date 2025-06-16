@@ -3,356 +3,566 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Um Jogo de Amor para Você! ❤️</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Relatório de Aplicação Fertilizante Fluido</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+        /* Estilos básicos para o formulário (Mantenha os estilos que já tinha) */
         body {
-            font-family: 'Inter', sans-serif;
-            overflow: hidden; 
+            font-family: Arial, sans-serif;
+            margin: 0; /* Remover margem padrão do body */
+            background-color: #f4f4f4;
         }
-        .heart {
-            position: absolute;
+        .container {
+            background-color: #fff;
+            padding: 20px; /* Reduzir o padding para telas menores */
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            margin: 20px auto; /* Centralizar com margem superior/inferior */
+        }
+        h1, h2 {
+            text-align: center;
+            color: #333;
+            font-size: 1.5em; /* Ajustar tamanho da fonte para mobile */
+        }
+        .section {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+        .section-title {
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #555;
+            font-size: 1.2em; /* Ajustar tamanho da fonte */
+        }
+        .form-group {
+            margin-bottom: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .form-group label {
+            flex: 0 0 150px; /* Largura fixa para os rótulos */
+            margin-right: 10px;
+            text-align: right;
+            font-weight: bold;
+            color: #666;
+            box-sizing: border-box; /* Incluir padding e border na largura */
+        }
+        .form-group input[type="text"],
+        .form-group input[type="number"],
+        .form-group input[type="date"],
+        .form-group input[type="time"] {
+            flex: 1; /* Ocupa o espaço restante */
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            min-width: 150px; /* Garante um tamanho mínimo para os inputs */
+        }
+        .form-group.inline-fields {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .form-group.inline-fields .field-pair {
+            display: flex;
+            align-items: center;
+            flex: 1 1 48%; /* Ocupa quase metade da largura para dois campos por linha */
+            margin-bottom: 10px;
+        }
+        .form-group.inline-fields .field-pair label {
+            flex: 0 0 auto; /* Ajusta a largura do rótulo automaticamente */
+            margin-right: 5px;
+            text-align: left;
+        }
+        .form-group.inline-fields .field-pair input {
+            flex: 1;
+        }
+        .radio-group {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap; /* Permite que os rádios quebrem a linha */
+        }
+        .radio-group input[type="radio"] {
+            margin-right: 5px;
+        }
+        .radio-group label {
+            margin-right: 15px;
+        }
+        textarea {
+            width: 100%;
+            min-height: 80px;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .signature-section {
+            text-align: center;
+            margin-top: 40px;
+            border-top: 1px dashed #ccc;
+            padding-top: 20px;
+        }
+        .signature-line {
+            width: 60%;
+            margin: 0 auto 10px auto;
+            border-bottom: 1px solid #000;
+            padding-top: 20px;
+        }
+        .signature-label {
+            margin-top: 5px;
+            font-weight: bold;
+        }
+        .signature-name {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+        .button-group {
+            text-align: center;
+            margin-top: 30px;
+        }
+        .button-group button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
             cursor: pointer;
-            user-select: none;
-            transition: transform 0.1s ease-out, opacity 0.3s ease-out;
-            z-index: 10; 
-            animation: fadeInOut 2s forwards; 
-            touch-action: manipulation; 
+            transition: background-color 0.3s ease;
+        }
+        .button-group button:hover {
+            background-color: #0056b3;
         }
 
-       
-        @keyframes fadeInOut {
-            0% { opacity: 0; transform: scale(0.5); }
-            20% { opacity: 1; transform: scale(1); }
-            80% { opacity: 1; transform: scale(1); }
-            100% { opacity: 0; transform: scale(0.5); }
+        /* --- MEDIA QUERIES PARA RESPONSIVIDADE (Mantenha os estilos que já tinha) --- */
+
+        /* Para telas com largura máxima de 768px (tablets e celulares) */
+        @media screen and (max-width: 768px) {
+            .container {
+                margin: 10px; /* Reduzir a margem em telas menores */
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 1.3em; /* Ajustar o tamanho da fonte do título principal */
+            }
+
+            h2.section-title {
+                font-size: 1.1em; /* Ajustar o tamanho da fonte dos subtítulos */
+            }
+
+            .form-group {
+                flex-direction: column; /* Empilha rótulos e inputs verticalmente */
+                align-items: flex-start; /* Alinha o rótulo à esquerda */
+            }
+
+            .form-group label {
+                flex: none; /* Remove a largura fixa do rótulo */
+                width: 100%; /* Rótulo ocupa toda a largura */
+                text-align: left; /* Alinha o rótulo à esquerda */
+                margin-right: 0;
+                margin-bottom: 5px; /* Adiciona um pequeno espaço abaixo do rótulo */
+            }
+
+            .form-group input[type="text"],
+            .form-group input[type="number"],
+            .form-group input[type="date"],
+            .form-group input[type="time"],
+            textarea {
+                width: 100%; /* Inputs e textarea ocupam 100% da largura */
+                min-width: unset; /* Remove o min-width para melhor adaptação */
+            }
+
+            .form-group.inline-fields {
+                flex-direction: column; /* Força empilhamento mesmo para inline-fields */
+            }
+
+            .form-group.inline-fields .field-pair {
+                flex: 1 1 100%; /* Ocupa 100% da largura */
+                flex-direction: column; /* Empilha rótulo e input dentro do field-pair */
+                align-items: flex-start;
+            }
+
+            .form-group.inline-fields .field-pair label {
+                width: 100%;
+                text-align: left;
+                margin-bottom: 5px;
+            }
+            .form-group.inline-fields .field-pair input {
+                width: 100%;
+            }
+
+            .radio-group {
+                flex-direction: column; /* Empilha as opções de rádio */
+                align-items: flex-start;
+            }
+            .radio-group label {
+                margin-bottom: 5px; /* Espaço entre as opções de rádio */
+            }
+
+            .signature-line {
+                width: 90%; /* Ajusta a largura da linha de assinatura */
+            }
         }
 
-        
-        .heart-clicked {
-            animation: popAndFade 0.25s forwards;
-        }
+        /* Para telas ainda menores (smartphones típicos) */
+        @media screen and (max-width: 480px) {
+            .container {
+                padding: 10px; /* Mais redução de padding */
+            }
 
-        @keyframes popAndFade {
-            0% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.3); opacity: 0.8; }
-            100% { transform: scale(0.5); opacity: 0; }
+            h1 {
+                font-size: 1.2em;
+            }
+
+            h2.section-title {
+                font-size: 1em;
+            }
+
+            .button-group button {
+                width: 90%; /* Botão ocupa mais espaço */
+                font-size: 14px;
+                padding: 8px 15px;
+            }
         }
     </style>
 </head>
-<body class="bg-gradient-to-br from-purple-400 via-pink-500 to-red-500 min-h-screen flex flex-col items-center justify-center text-white p-4">
+<body>
+    <div class="container">
+        <h1>Relatório de Aplicação Fertilizante Fluido.</h1>
 
-    <audio id="audioPositivo" src="som_positivo.mp3" preload="auto"></audio>
-    <audio id="audioNegativo" src="som_negativo.mp3" preload="auto"></audio>
-
-    <div id="game-container" class="relative w-full max-w-4xl h-[calc(100vh-120px)] bg-white bg-opacity-20 rounded-2xl shadow-xl flex flex-col items-center justify-center overflow-hidden border-4 border-white border-opacity-30">
-
-        <div id="header-area" class="absolute top-4 left-0 right-0 flex flex-col items-center z-20 space-y-2 px-2"> 
-            <div id="score-display" class="bg-white bg-opacity-30 text-white text-xl sm:text-2xl font-bold py-1 px-4 sm:py-2 sm:px-6 rounded-full shadow-lg">Pontos: 0</div>
-            <div id="message-display" class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-center drop-shadow-lg p-2 rounded-lg bg-black bg-opacity-30 max-w-xl mx-auto">
-                Clique nos corações!
+        <div class="section">
+            <div class="form-group">
+                <label for="empresa">Empresa:</label>
+                <input type="text" id="empresa" name="empresa" value="Terrena Agronegócios Ltda." readonly>
             </div>
-            <div id="timer-display" class="bg-white bg-opacity-30 text-white text-lg sm:text-xl font-bold py-1 px-4 rounded-full shadow-md">Tempo: 60s</div>
-        </div>
-        
-        <div id="pre-game-intro" class="absolute inset-0 bg-black bg-opacity-70 flex flex-col items-center justify-center p-4 rounded-2xl z-40">
-            <h2 class="text-3xl sm:text-5xl font-extrabold text-pink-300 text-center mb-6 drop-shadow-2xl">
-                Feliz Dia dos Namorados, meu Amor!
-            </h2>
-            <p class="text-lg sm:text-xl md:text-2xl font-bold text-white text-center mb-8 max-w-2xl leading-relaxed">
-                Neste jogo, você terá **60 segundos** para clicar em corações e revelar uma mensagem secreta sobre o nosso amor!
-                <br><br>
-                ❤️ Corações vermelhos: Ganhe **1 ponto** e revele parte da mensagem.
-                <br>
-                💔 Corações partidos: Cuidado! Você perde **2 pontos**.
-                <br><br>
-                Tente alcançar **30 pontos** para uma mensagem bônus especial, e se conseguir **50 pontos**, uma surpresa deliciosa te espera!
-                <br><br>
-                Pronta para desvendar nosso amor?
-            </p>
-            <button id="start-button" class="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 sm:py-4 sm:px-8 rounded-full shadow-lg transform transition-transform duration-200 hover:scale-105 text-xl sm:text-2xl">
-                Começar o Jogo!
-            </button>
+            <div class="form-group">
+                <label for="endereco">Endereço:</label>
+                <input type="text" id="endereco" name="endereco" value="Av. Rodrigo C. Avellar 1416. Bairro: Distrito Industrial." readonly>
+            </div>
+            <div class="form-group">
+                <label for="cidade_empresa">Cidade:</label>
+                <input type="text" id="cidade_empresa" name="cidade_empresa" value="Patos de Minas MG CEP: 38706-706" readonly>
+            </div>
         </div>
 
-
-        <div id="final-message-overlay" class="absolute inset-0 bg-black bg-opacity-70 flex flex-col items-center justify-center p-4 rounded-2xl hidden z-40">
-            <h2 class="text-3xl sm:text-5xl lg:text-6xl font-extrabold text-pink-300 text-center mb-4 sm:mb-6 drop-shadow-2xl">
-                Você é Incrível!
-            </h2>
-            <p id="full-love-message" class="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-white text-center mb-6 sm:mb-8 max-w-2xl leading-relaxed">
-                </p>
-            <button id="restart-button" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-5 sm:py-3 sm:px-6 rounded-full shadow-lg transform transition-transform duration-200 hover:scale-105 text-lg sm:text-xl">
-                Jogar Novamente
-            </button>
+        <div class="section">
+            <div class="form-group">
+                <label for="cliente">Cliente:</label>
+                <input type="text" id="cliente" name="cliente">
+            </div>
+            <div class="form-group inline-fields">
+                <div class="field-pair">
+                    <label for="fazenda">Fazenda:</label>
+                    <input type="text" id="fazenda" name="fazenda">
+                </div>
+                <div class="field-pair">
+                    <label for="cidade_fazenda">Cidade:</label>
+                    <input type="text" id="cidade_fazenda" name="cidade_fazenda">
+                </div>
+            </div>
+            <div class="form-group inline-fields">
+                <div class="field-pair">
+                    <label for="operador">Operador:</label>
+                    <input type="text" id="operador" name="operador">
+                </div>
+                <div class="field-pair">
+                    <label for="consultor">Consultor:</label>
+                    <input type="text" id="consultor" name="consultor">
+                </div>
+            </div>
+            <div class="form-group inline-fields">
+                <div class="field-pair">
+                    <label for="data_aplicacao">Data Aplicação:</label>
+                    <input type="date" id="data_aplicacao" name="data_aplicacao">
+                </div>
+                <div class="field-pair">
+                    <label for="n_pedido">Nº Pedido:</label>
+                    <input type="text" id="n_pedido" name="n_pedido">
+                </div>
+            </div>
         </div>
 
+        <div class="section">
+            <h2 class="section-title">Descrição da Aplicação.</h2>
+            <div class="form-group">
+                <label for="modelo_equipamento">Modelo do Equipamento:</label>
+                <input type="text" id="modelo_equipamento" name="modelo_equipamento">
+            </div>
+            <div class="form-group">
+                <label for="talhao">Talhão:</label>
+                <input type="text" id="talhao" name="talhao">
+            </div>
+            <div class="form-group inline-fields">
+                <div class="field-pair">
+                    <label for="ha_aplicado">Há Aplicado:</label>
+                    <input type="number" id="ha_aplicado" name="ha_aplicado" step="0.01">
+                </div>
+                <div class="field-pair">
+                    <label for="ha_feita">Há Feita:</label>
+                    <input type="number" id="ha_feita" name="ha_feita" step="0.01">
+                </div>
+            </div>
+            <div class="form-group inline-fields">
+                <div class="field-pair">
+                    <label for="hora_aplicado">Hora Aplicado:</label>
+                    <input type="time" id="hora_aplicado" name="hora_aplicado">
+                </div>
+                <div class="field-pair">
+                    <label for="transpasse">Transpasse:</label>
+                    <input type="text" id="transpasse" name="transpasse">
+                </div>
+            </div>
+            <div class="form-group inline-fields">
+                <div class="field-pair">
+                    <label for="velocidade_media">Velocidade Média:</label>
+                    <input type="number" id="velocidade_media" name="velocidade_media" step="0.01">
+                </div>
+                <div class="field-pair">
+                    <label for="kg_ha">Kg/ha:</label>
+                    <input type="number" id="kg_ha" name="kg_ha" step="0.01">
+                </div>
+            </div>
+            <div class="form-group inline-fields">
+                <div class="field-pair">
+                    <label for="hori_metro_inicial">Hori metro Inicial:</label>
+                    <input type="number" id="hori_metro_inicial" name="hori_metro_inicial">
+                </div>
+                <div class="field-pair">
+                    <label for="hori_metro_final">Hori metro Final:</label>
+                    <input type="number" id="hori_metro_final" name="hori_metro_final">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="litros_abast">Litros Abast:</label>
+                <input type="number" id="litros_abast" name="litros_abast" step="0.01">
+            </div>
+            <div class="form-group">
+                <label>Houve Ocorrência:( ) Sim ( ) Não.</label>
+                <div class="radio-group">
+                    <input type="radio" id="ocorrencia_sim" name="ocorrencia" value="Sim">
+                    <label for="ocorrencia_sim">Sim</label>
+                    <input type="radio" id="ocorrencia_nao" name="ocorrencia" value="Não">
+                    <label for="ocorrencia_nao">Não</label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="hora_chegada_caminhao">Hora Chegada Caminhão:</label>
+                <input type="time" id="hora_chegada_caminhao" name="hora_chegada_caminhao">
+            </div>
+            <div class="form-group inline-fields">
+                <div class="field-pair">
+                    <label for="hora_pedido_fertilizante">Hora Pedido Fertilizante:</label>
+                    <input type="time" id="hora_pedido_fertilizante" name="hora_pedido_fertilizante">
+                </div>
+                <div class="field-pair">
+                    <label for="cultura">Cultura:</label>
+                    <input type="text" id="cultura" name="cultura">
+                </div>
+            </div>
         </div>
 
-    <div id="custom-modal-container" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 hidden p-4">
-        <div class="bg-white p-6 sm:p-8 rounded-xl shadow-2xl text-gray-800 text-center max-w-sm w-full">
-            <p id="custom-modal-text" class="text-lg sm:text-xl mb-4"></p>
-            <button id="custom-modal-close" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-5 rounded-full text-base sm:text-lg">OK</button>
+        <div class="section">
+            <h2 class="section-title">Ocorrência</h2>
+            <textarea id="ocorrencia_texto" name="ocorrencia_texto" rows="5"></textarea>
+        </div>
+
+        <div class="signature-section">
+            <p>_____________________________________ de _____________________________________</p>
+            <p class="signature-name">Evânio Lucas de Oliveira Andrade.</p>
+            <p class="signature-label">Supervisor de Operações.</p>
+        </div>
+
+        <div class="signature-section">
+            <div class="form-group">
+                <label for="nome_assinatura">Nome:</label>
+                <input type="text" id="nome_assinatura" name="nome_assinatura">
+            </div>
+            <div class="form-group">
+                <label for="assinatura">Assinatura:</label>
+                <input type="text" id="assinatura" name="assinatura" placeholder="Assine aqui, ou deixe para impressão.">
+            </div>
+        </div>
+
+        <div class="button-group">
+            <button type="submit" id="enviarRelatorioBtn">Enviar Relatório</button>
         </div>
     </div>
 
-
     <script>
-        const gameContainer = document.getElementById('game-container');
-        const scoreDisplay = document.getElementById('score-display');
-        const messageDisplay = document.getElementById('message-display');
-        const timerDisplay = document.getElementById('timer-display');
-        const preGameIntro = document.getElementById('pre-game-intro'); 
-        const startButton = document.getElementById('start-button');
-        const finalMessageOverlay = document.getElementById('final-message-overlay');
-        const fullLoveMessageDisplay = document.getElementById('full-love-message');
-        const restartButton = document.getElementById('restart-button');
-        const customModalContainer = document.getElementById('custom-modal-container');
-        const customModalText = document.getElementById('custom-modal-text');
-        const customModalCloseButton = document.getElementById('custom-modal-close');
-        const headerArea = document.getElementById('header-area'); 
+        // Importa a classe jsPDF do módulo que acabamos de carregar
+        const { jsPDF } = window.jspdf;
 
-        const audioPositivo = document.getElementById('audioPositivo');
-        const audioNegativo = document.getElementById('audioNegativo');
+        const enviarRelatorioBtn = document.getElementById('enviarRelatorioBtn');
 
-        // --- Configurações do Jogo ---
-        let score = 0;
-        let gameDuration = 60; // Segundos
-        let timeRemaining = gameDuration;
-        let heartInterval;
-        let timerInterval;
-        let currentMessageIndex = 0;
-        const loveMessage = "VOCÊ FAZ MINHA VIDA MAIS COLORIDA, TE AMO!";
-        const messageParts = loveMessage.split(' ');
-        let heartsOnScreen = 0;
-        const maxHearts = 10;
-        const limiteDePontosParaMensagemSecreta = 30;
-        const limiteDePontosParaValeSushi = 50;
+        enviarRelatorioBtn.addEventListener('click', function(event) {
+            event.preventDefault(); // Impede o envio padrão do formulário
 
-        // Função para mostrar um modal personalizado (substitui alert())
-        function showModal(message) {
-            customModalText.textContent = message;
-            customModalContainer.classList.remove('hidden');
-        }
+            // Coletar dados do formulário (mesma lógica de antes)
+            const empresa = document.getElementById('empresa').value;
+            const endereco = document.getElementById('endereco').value;
+            const cidadeEmpresa = document.getElementById('cidade_empresa').value;
+            const cliente = document.getElementById('cliente').value;
+            const fazenda = document.getElementById('fazenda').value;
+            const cidadeFazenda = document.getElementById('cidade_fazenda').value;
+            const operador = document.getElementById('operador').value;
+            const consultor = document.getElementById('consultor').value;
+            const dataAplicacao = document.getElementById('data_aplicacao').value;
+            const nPedido = document.getElementById('n_pedido').value;
+            const modeloEquipamento = document.getElementById('modelo_equipamento').value;
+            const talhao = document.getElementById('talhao').value;
+            const haAplicado = document.getElementById('ha_aplicado').value;
+            const haFeita = document.getElementById('ha_feita').value;
+            const horaAplicado = document.getElementById('hora_aplicado').value;
+            const transpasse = document.getElementById('transpasse').value;
+            const velocidadeMedia = document.getElementById('velocidade_media').value;
+            const kgHa = document.getElementById('kg_ha').value;
+            const horiMetroInicial = document.getElementById('hori_metro_inicial').value;
+            const horiMetroFinal = document.getElementById('hori_metro_final').value;
+            const litrosAbast = document.getElementById('litros_abast').value;
+            
+            let houveOcorrencia = '';
+            if (document.getElementById('ocorrencia_sim').checked) {
+                houveOcorrencia = 'Sim';
+            } else if (document.getElementById('ocorrencia_nao').checked) {
+                houveOcorrencia = 'Não';
+            }
 
-        // Event listener para fechar o modal
-        customModalCloseButton.addEventListener('click', () => {
-            customModalContainer.classList.add('hidden');
+            const horaChegadaCaminhao = document.getElementById('hora_chegada_caminhao').value;
+            const horaPedidoFertilizante = document.getElementById('hora_pedido_fertilizante').value;
+            const cultura = document.getElementById('cultura').value;
+            const ocorrenciaTexto = document.getElementById('ocorrencia_texto').value;
+            const nomeAssinatura = document.getElementById('nome_assinatura').value;
+            const assinatura = document.getElementById('assinatura').value;
+
+            // --- Parte de Geração de PDF ---
+            const doc = new jsPDF();
+            let y = 10; // Posição Y inicial para o texto
+
+            doc.setFontSize(16);
+            doc.text("Relatório de Aplicação Fertilizante Fluido", 105, y, { align: "center" });
+            y += 10;
+
+            doc.setFontSize(12);
+            y += 5;
+            doc.text("--- Dados da Empresa ---", 10, y);
+            y += 7;
+            doc.text(`Empresa: ${empresa}`, 10, y); y += 7;
+            doc.text(`Endereço: ${endereco}`, 10, y); y += 7;
+            doc.text(`Cidade (Empresa): ${cidadeEmpresa}`, 10, y); y += 10;
+
+            doc.text("--- Dados do Cliente e Aplicação ---", 10, y);
+            y += 7;
+            doc.text(`Cliente: ${cliente || 'Não preenchido'}`, 10, y); y += 7;
+            doc.text(`Fazenda: ${fazenda || 'Não preenchida'}`, 10, y); y += 7;
+            doc.text(`Cidade (Fazenda): ${cidadeFazenda || 'Não preenchida'}`, 10, y); y += 7;
+            doc.text(`Operador: ${operador || 'Não preenchido'}`, 10, y); y += 7;
+            doc.text(`Consultor: ${consultor || 'Não preenchido'}`, 10, y); y += 7;
+            doc.text(`Data Aplicação: ${dataAplicacao || 'Não preenchida'}`, 10, y); y += 7;
+            doc.text(`Nº Pedido: ${nPedido || 'Não preenchido'}`, 10, y); y += 10;
+
+            doc.text("--- Descrição da Aplicação ---", 10, y);
+            y += 7;
+            doc.text(`Modelo Equipamento: ${modeloEquipamento || 'Não preenchido'}`, 10, y); y += 7;
+            doc.text(`Talhão: ${talhao || 'Não preenchido'}`, 10, y); y += 7;
+            doc.text(`Há Aplicado: ${haAplicado || 'Não preenchido'}`, 10, y); y += 7;
+            doc.text(`Há Feita: ${haFeita || 'Não preenchido'}`, 10, y); y += 7;
+            doc.text(`Hora Aplicado: ${horaAplicado || 'Não preenchida'}`, 10, y); y += 7;
+            doc.text(`Transpasse: ${transpasse || 'Não preenchido'}`, 10, y); y += 7;
+            doc.text(`Velocidade Média: ${velocidadeMedia || 'Não preenchida'}`, 10, y); y += 7;
+            doc.text(`Kg/ha: ${kgHa || 'Não preenchido'}`, 10, y); y += 7;
+            doc.text(`Hori metro Inicial: ${horiMetroInicial || 'Não preenchido'}`, 10, y); y += 7;
+            doc.text(`Hori metro Final: ${horiMetroFinal || 'Não preenchido'}`, 10, y); y += 7;
+            doc.text(`Litros Abast: ${litrosAbast || 'Não preenchido'}`, 10, y); y += 7;
+            doc.text(`Houve Ocorrência: ${houveOcorrencia || 'Não preenchido'}`, 10, y); y += 7;
+            doc.text(`Hora Chegada Caminhão: ${horaChegadaCaminhao || 'Não preenchida'}`, 10, y); y += 7;
+            doc.text(`Hora Pedido Fertilizante: ${horaPedidoFertilizante || 'Não preenchida'}`, 10, y); y += 7;
+            doc.text(`Cultura: ${cultura || 'Não preenchida'}`, 10, y); y += 10;
+
+            if (ocorrenciaTexto.trim() !== '') {
+                doc.text("--- Detalhes da Ocorrência ---", 10, y);
+                y += 7;
+                // autoPrint: ajusta o texto para caber na largura da página
+                const splitText = doc.splitTextToSize(ocorrenciaTexto, 180); // 180mm de largura máxima
+                doc.text(splitText, 10, y);
+                y += (splitText.length * 7) + 10; // Ajusta y para o próximo bloco de texto
+            }
+
+            // Assinatura
+            doc.text("--- Assinatura ---", 10, y);
+            y += 7;
+            doc.text(`Nome: ${nomeAssinatura || 'Não preenchido'}`, 10, y); y += 7;
+            doc.text(`Assinatura: ${assinatura || 'Não preenchido'}`, 10, y); y += 7;
+            doc.text(`Supervisor de Operações: Evânio Lucas de Oliveira Andrade.`, 10, y); y += 10;
+
+
+            // Salva o PDF. Isso iniciará o download.
+            // O nome do arquivo incluirá a data e o cliente para facilitar a identificação.
+            const dataHoje = new Date().toLocaleDateString('pt-BR').replace(/\//g, '-');
+            const nomeArquivo = `Relatorio_Fertilizante_${dataHoje}_${cliente || 'Sem Cliente'}.pdf`;
+            doc.save(nomeArquivo);
+
+            // --- Parte de Envio para WhatsApp (Texto) ---
+            // A mensagem do WhatsApp ainda será enviada como texto.
+            let mensagemWhatsApp = `*Relatório de Aplicação Fertilizante Fluido*\n\n`;
+            mensagemWhatsApp += `--- Dados da Empresa ---\n`;
+            mensagemWhatsApp += `Empresa: ${empresa}\n`;
+            mensagemWhatsApp += `Endereço: ${endereco}\n`;
+            mensagemWhatsApp += `Cidade (Empresa): ${cidadeEmpresa}\n\n`;
+
+            mensagemWhatsApp += `--- Dados do Cliente e Aplicação ---\n`;
+            mensagemWhatsApp += `Cliente: ${cliente || 'Não preenchido'}\n`;
+            mensagemWhatsApp += `Fazenda: ${fazenda || 'Não preenchida'}\n`;
+            mensagemWhatsApp += `Cidade (Fazenda): ${cidadeFazenda || 'Não preenchida'}\n`;
+            mensagemWhatsApp += `Operador: ${operador || 'Não preenchido'}\n`;
+            mensagemWhatsApp += `Consultor: ${consultor || 'Não preenchido'}\n`;
+            mensagemWhatsApp += `Data Aplicação: ${dataAplicacao || 'Não preenchida'}\n`;
+            mensagemWhatsApp += `Nº Pedido: ${nPedido || 'Não preenchido'}\n\n`;
+
+            mensagemWhatsApp += `--- Descrição da Aplicação ---\n`;
+            mensagemWhatsApp += `Modelo Equipamento: ${modeloEquipamento || 'Não preenchido'}\n`;
+            mensagemWhatsApp += `Talhão: ${talhao || 'Não preenchido'}\n`;
+            mensagemWhatsApp += `Há Aplicado: ${haAplicado || 'Não preenchido'}\n`;
+            mensagemWhatsApp += `Há Feita: ${haFeita || 'Não preenchido'}\n`;
+            mensagemWhatsApp += `Hora Aplicado: ${horaAplicado || 'Não preenchida'}\n`;
+            mensagemWhatsApp += `Transpasse: ${transpasse || 'Não preenchido'}\n`;
+            mensagemWhatsApp += `Velocidade Média: ${velocidadeMedia || 'Não preenchida'}\n`;
+            mensagemWhatsApp += `Kg/ha: ${kgHa || 'Não preenchido'}\n`;
+            mensagemWhatsApp += `Hori metro Inicial: ${horiMetroInicial || 'Não preenchido'}\n`;
+            mensagemWhatsApp += `Hori metro Final: ${horiMetroFinal || 'Não preenchido'}\n`;
+            mensagemWhatsApp += `Litros Abast: ${litrosAbast || 'Não preenchido'}\n`;
+            mensagemWhatsApp += `Houve Ocorrência: ${houveOcorrencia || 'Não preenchido'}\n`;
+            mensagemWhatsApp += `Hora Chegada Caminhão: ${horaChegadaCaminhao || 'Não preenchida'}\n`;
+            mensagemWhatsApp += `Hora Pedido Fertilizante: ${horaPedidoFertilizante || 'Não preenchida'}\n`;
+            mensagemWhatsApp += `Cultura: ${cultura || 'Não preenchida'}\n\n`;
+
+            if (ocorrenciaTexto.trim() !== '') {
+                mensagemWhatsApp += `--- Detalhes da Ocorrência ---\n`;
+                mensagemWhatsApp += `${ocorrenciaTexto}\n\n`;
+            }
+
+            mensagemWhatsApp += `--- Assinatura ---\n`;
+            mensagemWhatsApp += `Nome: ${nomeAssinatura || 'Não preenchido'}\n`;
+            mensagemWhatsApp += `Assinatura: ${assinatura || 'Não preenchido'}\n`;
+            mensagemWhatsApp += `\nSupervisor de Operações: Evânio Lucas de Oliveira Andrade.`;
+
+
+            const mensagemCodificada = encodeURIComponent(mensagemWhatsApp);
+
+            // Substitua '55DDNNNNNNNNN' pelo número de telefone completo (com código do país e DDD)
+            const numeroWhatsApp = '5534991736374'; // <-- MUDAR ESTE NÚMERO!
+
+            const whatsappURL = `https://wa.me/${numeroWhatsApp}?text=${mensagemCodificada}`;
+            
+            // Abre o WhatsApp em uma nova aba/janela após a geração do PDF
+            window.open(whatsappURL, '_blank');
         });
-
-        // Função para tocar um som
-        function playSound(audioElement) {
-            audioElement.currentTime = 0;
-            audioElement.play();
-        }
-
-        // Função para criar um coração
-        function createHeart() {
-            if (heartsOnScreen >= maxHearts) {
-                return;
-            }
-
-            const heart = document.createElement('div');
-            const isGoodHeart = Math.random() < 0.8; // Probabilidade de ser um coração bom
-
-            if (isGoodHeart) {
-                heart.classList.add('bg-rose-500');
-                heart.textContent = '❤️';
-                heart.dataset.type = 'good';
-            } else {
-                heart.classList.add('bg-gray-700', 'text-gray-300');
-                heart.textContent = '💔';
-                heart.dataset.type = 'bad';
-            }
-
-            heart.classList.add('heart', 'absolute', 'rounded-full', 'flex', 'items-center', 'justify-center', 'text-white', 'font-bold', 'select-none', 'text-4xl', 'sm:text-5xl', 'shadow-lg');
-            heart.style.width = '60px';
-            heart.style.height = '60px';
-
-            const containerRect = gameContainer.getBoundingClientRect();
-            const heartSize = 60;
-            const padding = 10;
-
-            const currentHeaderHeight = headerArea.offsetHeight + 10; 
-            
-            const minX = padding;
-            const maxX = containerRect.width - heartSize - padding;
-            let minY = currentHeaderHeight + padding; 
-            const maxY = containerRect.height - heartSize - padding; 
-
-            if (minY >= maxY) {
-                minY = Math.max(minY, containerRect.height - heartSize - padding - 20); 
-            }
-
-            const randomX = Math.random() * (maxX - minX) + minX;
-            const randomY = Math.random() * (maxY - minY) + minY;
-
-            heart.style.left = `${randomX}px`;
-            heart.style.top = `${randomY}px`;
-
-            gameContainer.appendChild(heart);
-            heartsOnScreen++;
-
-            const lifetime = setTimeout(() => {
-                if (heart.parentNode) {
-                    heart.classList.add('heart-clicked');
-                    heart.addEventListener('animationend', () => {
-                        if (heart.parentNode) {
-                            heart.parentNode.removeChild(heart);
-                            heartsOnScreen--;
-                        }
-                    }, { once: true });
-                }
-            }, 2000);
-
-            heart.addEventListener('click', (event) => {
-                const heartType = event.target.dataset.type;
-
-                if (heartType === 'good') {
-                    score++;
-                    playSound(audioPositivo);
-                    if (currentMessageIndex < messageParts.length) {
-                        const revealedPart = messageParts.slice(0, currentMessageIndex + 1).join(' ');
-                        messageDisplay.textContent = revealedPart;
-                        currentMessageIndex++;
-                    } else {
-                        messageDisplay.textContent = loveMessage;
-                    }
-                } else if (heartType === 'bad') {
-                    score = Math.max(0, score - 2);
-                    playSound(audioNegativo);
-                    showModal("Oh não! Coração partido! Você perdeu 2 pontos.");
-                }
-
-                scoreDisplay.textContent = `Pontos: ${score}`;
-
-                heart.classList.add('heart-clicked');
-                clearTimeout(lifetime);
-
-                heart.addEventListener('animationend', () => {
-                    if (heart.parentNode) {
-                        heart.parentNode.removeChild(heart);
-                        heartsOnScreen--;
-                    }
-                }, { once: true });
-            });
-        }
-
-        // Função para iniciar o jogo (modificada para esconder a introdução)
-        function startGame() {
-            score = 0;
-            timeRemaining = gameDuration;
-            currentMessageIndex = 0;
-            heartsOnScreen = 0;
-
-            scoreDisplay.textContent = `Pontos: ${score}`;
-            messageDisplay.textContent = "Clique nos corações!";
-            timerDisplay.textContent = `Tempo: ${timeRemaining}s`;
-
-            // NOVO: Esconde a tela de introdução
-            preGameIntro.classList.add('hidden'); 
-            // REMOVIDO: startButton.classList.add('hidden');
-            // REMOVIDO: instructionMessage.classList.add('hidden');
-            finalMessageOverlay.classList.add('hidden');
-            
-            gameContainer.style.height = `calc(100vh - 120px)`; 
-
-            gameContainer.querySelectorAll('.heart').forEach(h => h.remove());
-
-            heartInterval = setInterval(createHeart, 600);
-
-            timerInterval = setInterval(() => {
-                timeRemaining--;
-                timerDisplay.textContent = `Tempo: ${timeRemaining}s`;
-
-                if (timeRemaining <= 0) {
-                    endGame();
-                }
-            }, 1000);
-        }
-
-        // Função para finalizar o jogo
-        function endGame() {
-            clearInterval(heartInterval);
-            clearInterval(timerInterval);
-
-            gameContainer.querySelectorAll('.heart').forEach(heart => {
-                heart.classList.add('heart-clicked');
-                heart.addEventListener('animationend', () => {
-                    if (heart.parentNode) {
-                        heart.parentNode.removeChild(heart);
-                    }
-                }, { once: true });
-            });
-
-            showFinalMessage();
-        }
-
-        // Função para exibir a tela de mensagem final
-        function showFinalMessage() {
-            let finalMessageHtml = `
-                <span class="text-purple-200">Você é a luz do meu dia, a razão do meu sorriso.</span><br>
-                <span class="text-pink-200">${loveMessage}</span><br>
-                <span class="text-rose-200">Com todo o meu amor, Seu Noivo Kadu!</span>
-            `;
-
-            if (score >= limiteDePontosParaValeSushi) {
-                finalMessageHtml += `
-                    <br><br>
-                    <span class="text-green-300 text-2xl sm:text-3xl font-extrabold animate-pulse">
-                        🍣 VOCÊ GANHOU UM VALE-SUSHI E 1 HORA DAQUELA MASSAGEM ESPECIAL! 🍣
-                    </span>
-                    <span class="text-white text-lg sm:text-xl mt-4">
-                        Parabéns, meu amor! Sua dedicação foi recompensada! 
-                        Prepare-se para um jantar com um sushi maravilhoso! 
-                        Mas não se esqueça que você será a sombrimesa!
-                    </span>
-                `;
-            } else if (score >= limiteDePontosParaMensagemSecreta) {
-                finalMessageHtml += `
-                    <br><br>
-                    <span class="text-yellow-300 text-2xl sm:text-3xl font-extrabold animate-pulse">
-                        ⭐ BÔNUS! VOCÊ DESBLOQUEOU UMA MENSAGEM SECRETA! ⭐
-                    </span>
-                    <span class="text-white text-lg sm:text-xl mt-4">
-                        Cada ponto que você fez é um momento de alegria que vivemos juntos. 
-                        Este jogo é um lembrete do quanto sua alegria ilumina a minha vida. 
-                        Obrigado por cada risada, cada abraço, cada 'eu te amo'.
-                        Você é meu maior presente, hoje e sempre!
-                        Feliz Dia dos Namorados, meu amor!
-                    </span>
-                `;
-            } else {
-                finalMessageHtml += `
-                    <br><br>
-                    <span class="text-blue-300 text-2xl sm:text-3xl font-extrabold">
-                        🤔 Faltou pouco para uma mensagem super secreta! 🤔
-                    </span>
-                    <span class="text-white text-lg sm:text-xl mt-4">
-                        Tente novamente e supere os ${limiteDePontosParaMensagemSecreta} pontos para descobrir o que te espera! 
-                        Seu amor é um enigma que adoro desvendar! ❤️
-                    </span>
-                `;
-            }
-
-            fullLoveMessageDisplay.innerHTML = finalMessageHtml;
-            finalMessageOverlay.classList.remove('hidden');
-            finalMessageOverlay.classList.add('flex');
-        }
-
-
-        // Event listeners para os botões
-        startButton.addEventListener('click', startGame);
-        restartButton.addEventListener('click', startGame);
-
-        function adjustGameContainerSize() {
-            gameContainer.style.height = `calc(100vh - 120px)`; 
-        }
-
-        window.addEventListener('load', adjustGameContainerSize);
-        window.addEventListener('resize', adjustGameContainerSize);
-
     </script>
 </body>
 </html>
