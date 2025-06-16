@@ -316,10 +316,6 @@
                 </div>
             </div>
             <div class="form-group">
-                <label for="litros_abast">Litros Abast:</label>
-                <input type="number" id="litros_abast" name="litros_abast" step="0.01">
-            </div>
-            <div class="form-group">
                 <label>Houve Ocorrência:( ) Sim ( ) Não.</label>
                 <div class="radio-group">
                     <input type="radio" id="ocorrencia_sim" name="ocorrencia" value="Sim">
@@ -455,7 +451,6 @@
             doc.text(`Kg/ha: ${kgHa || 'Não preenchido'}`, 10, y); y += 7;
             doc.text(`Hori metro Inicial: ${horiMetroInicial || 'Não preenchido'}`, 10, y); y += 7;
             doc.text(`Hori metro Final: ${horiMetroFinal || 'Não preenchido'}`, 10, y); y += 7;
-            doc.text(`Litros Abast: ${litrosAbast || 'Não preenchido'}`, 10, y); y += 7;
             doc.text(`Houve Ocorrência: ${houveOcorrencia || 'Não preenchido'}`, 10, y); y += 7;
             doc.text(`Hora Chegada Caminhão: ${horaChegadaCaminhao || 'Não preenchida'}`, 10, y); y += 7;
             doc.text(`Hora Pedido Fertilizante: ${horaPedidoFertilizante || 'Não preenchida'}`, 10, y); y += 7;
@@ -506,7 +501,6 @@
             mensagemWhatsApp += `Kg/ha: ${kgHa || 'Não preenchido'}\n`;
             mensagemWhatsApp += `Hori metro Inicial: ${horiMetroInicial || 'Não preenchido'}\n`;
             mensagemWhatsApp += `Hori metro Final: ${horiMetroFinal || 'Não preenchido'}\n`;
-            mensagemWhatsApp += `Litros Abast: ${litrosAbast || 'Não preenchido'}\n`;
             mensagemWhatsApp += `Houve Ocorrência: ${houveOcorrencia || 'Não preenchido'}\n`;
             mensagemWhatsApp += `Hora Chegada Caminhão: ${horaChegadaCaminhao || 'Não preenchida'}\n`;
             mensagemWhatsApp += `Hora Pedido Fertilizante: ${horaPedidoFertilizante || 'Não preenchida'}\n`;
