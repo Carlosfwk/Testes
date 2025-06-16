@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Relatório de Aplicação Fertilizante Fluido</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <link rel="manifest" href="/relatorio-fertilizante/manifest.json">
+    <meta name="theme-color" content="#007bff"/>
     <style>
         /* Estilos básicos para o formulário (Mantenha os estilos que já tinha) */
         body {
@@ -234,6 +237,24 @@
     </style>
 </head>
 <body>
+    <script>
+        // ... Seu JavaScript atual para o formulário e PDF/WhatsApp aqui ...
+
+        // NOVO CÓDIGO PARA REGISTRAR O SERVICE WORKER
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                // Ajustar o caminho para incluir o nome do repositório
+                navigator.serviceWorker.register('/relatorio-fertilizante/service-worker.js')
+                    .then(registration => {
+                        console.log('Service Worker registrado com sucesso:', registration.scope);
+                    })
+                    .catch(error => {
+                        console.error('Falha no registro do Service Worker:', error);
+                    });
+            });
+        }
+        // FIM DO NOVO CÓDIGO
+    </script>
     <div class="container">
         <h1>Relatório de Aplicação Fertilizante Fluido.</h1>
 
