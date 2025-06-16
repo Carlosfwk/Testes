@@ -6,7 +6,7 @@
     <title>Relatório de Aplicação Fertilizante Fluido</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
-    <link rel="manifest" href="/relatorio-fertilizante/manifest.json">
+    <link rel="manifest" href="/Testes/manifest.json">
     <meta name="theme-color" content="#007bff"/>
     <style>
         /* Estilos básicos para o formulário */
@@ -536,7 +536,7 @@
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 // ATENÇÃO: SUBSTITUA 'relatorio-fertilizante' PELO NOME DO SEU REPOSITÓRIO NO GITHUB!
-                navigator.serviceWorker.register('/relatorio-fertilizante/service-worker.js')
+                navigator.serviceWorker.register('/Testes/service-worker.js')
                     .then(registration => {
                         console.log('Service Worker registrado com sucesso:', registration.scope);
                     })
