@@ -6,27 +6,27 @@
     <title>Relatório de Aplicação Fertilizante Fluido</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
-    <link rel="manifest" href="/Testes/manifest.json">
+    <link rel="manifest" href="./manifest.json">
     <meta name="theme-color" content="#007bff"/>
     <style>
         /* Estilos básicos para o formulário */
         body {
             font-family: Arial, sans-serif;
-            margin: 0; /* Remover margem padrão do body */
+            margin: 0;
             background-color: #f4f4f4;
         }
         .container {
             background-color: #fff;
-            padding: 20px; /* Reduzir o padding para telas menores */
+            padding: 20px;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             max-width: 800px;
-            margin: 20px auto; /* Centralizar com margem superior/inferior */
+            margin: 20px auto;
         }
         h1, h2 {
             text-align: center;
             color: #333;
-            font-size: 1.5em; /* Ajustar tamanho da fonte para mobile */
+            font-size: 1.5em;
         }
         .section {
             border: 1px solid #ddd;
@@ -39,7 +39,7 @@
             font-weight: bold;
             margin-bottom: 15px;
             color: #555;
-            font-size: 1.2em; /* Ajustar tamanho da fonte */
+            font-size: 1.2em;
         }
         .form-group {
             margin-bottom: 10px;
@@ -48,23 +48,23 @@
             align-items: center;
         }
         .form-group label {
-            flex: 0 0 150px; /* Largura fixa para os rótulos */
+            flex: 0 0 150px;
             margin-right: 10px;
             text-align: right;
             font-weight: bold;
             color: #666;
-            box-sizing: border-box; /* Incluir padding e border na largura */
+            box-sizing: border-box;
         }
         .form-group input[type="text"],
         .form-group input[type="number"],
         .form-group input[type="date"],
         .form-group input[type="time"] {
-            flex: 1; /* Ocupa o espaço restante */
+            flex: 1;
             padding: 8px;
             border: 1px solid #ccc;
             border-radius: 4px;
             box-sizing: border-box;
-            min-width: 150px; /* Garante um tamanho mínimo para os inputs */
+            min-width: 150px;
         }
         .form-group.inline-fields {
             display: flex;
@@ -75,11 +75,11 @@
         .form-group.inline-fields .field-pair {
             display: flex;
             align-items: center;
-            flex: 1 1 48%; /* Ocupa quase metade da largura para dois campos por linha */
+            flex: 1 1 48%;
             margin-bottom: 10px;
         }
         .form-group.inline-fields .field-pair label {
-            flex: 0 0 auto; /* Ajusta a largura do rótulo automaticamente */
+            flex: 0 0 auto;
             margin-right: 5px;
             text-align: left;
         }
@@ -89,7 +89,7 @@
         .radio-group {
             display: flex;
             align-items: center;
-            flex-wrap: wrap; /* Permite que os rádios quebrem a linha */
+            flex-wrap: wrap;
         }
         .radio-group input[type="radio"] {
             margin-right: 5px;
@@ -324,10 +324,19 @@
                     <label for="ocorrencia_nao">Não</label>
                 </div>
             </div>
+            <div class="form-group inline-fields">
                 <div class="field-pair">
-                    <label for="cultura">Cultura:</label>
-                    <input type="text" id="cultura" name="cultura">
+                    <label for="hora_chegada_caminhao">Chegada Caminhão:</label>
+                    <input type="time" id="hora_chegada_caminhao" name="hora_chegada_caminhao">
                 </div>
+                <div class="field-pair">
+                    <label for="hora_pedido_fertilizante">Pedido Fertilizante:</label>
+                    <input type="time" id="hora_pedido_fertilizante" name="hora_pedido_fertilizante">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="cultura">Cultura:</label>
+                <input type="text" id="cultura" name="cultura">
             </div>
         </div>
 
@@ -359,53 +368,58 @@
     </div>
 
     <script>
-        // Importa a classe jsPDF do módulo que acabamos de carregar
         const { jsPDF } = window.jspdf;
-
         const enviarRelatorioBtn = document.getElementById('enviarRelatorioBtn');
 
-        enviarRelatorioBtn.addEventListener('click', function(event) {
-            event.preventDefault(); // Impede o envio padrão do formulário
+        function getFormData() {
+            const data = {};
+            const ids = [
+                'empresa', 'endereco', 'cidade_empresa', 'cliente', 'fazenda', 'cidade_fazenda',
+                'operador', 'consultor', 'data_aplicacao', 'n_pedido', 'modelo_equipamento',
+                'talhao', 'ha_aplicado', 'ha_feita', 'hora_aplicado', 'transpasse',
+                'velocidade_media', 'kg_ha', 'hori_metro_inicial', 'hori_metro_final',
+                'cultura', 'ocorrencia_texto', 'nome_assinatura', 'assinatura',
+                'hora_chegada_caminhao', 'hora_pedido_fertilizante'
+            ];
 
-            // Coletar dados do formulário
-            const empresa = document.getElementById('empresa').value;
-            const endereco = document.getElementById('endereco').value;
-            const cidadeEmpresa = document.getElementById('cidade_empresa').value;
-            const cliente = document.getElementById('cliente').value;
-            const fazenda = document.getElementById('fazenda').value;
-            const cidadeFazenda = document.getElementById('cidade_fazenda').value;
-            const operador = document.getElementById('operador').value;
-            const consultor = document.getElementById('consultor').value;
-            const dataAplicacao = document.getElementById('data_aplicacao').value;
-            const nPedido = document.getElementById('n_pedido').value;
-            const modeloEquipamento = document.getElementById('modelo_equipamento').value;
-            const talhao = document.getElementById('talhao').value;
-            const haAplicado = document.getElementById('ha_aplicado').value;
-            const haFeita = document.getElementById('ha_feita').value;
-            const horaAplicado = document.getElementById('hora_aplicado').value;
-            const transpasse = document.getElementById('transpasse').value;
-            const velocidadeMedia = document.getElementById('velocidade_media').value;
-            const kgHa = document.getElementById('kg_ha').value;
-            const horiMetroInicial = document.getElementById('hori_metro_inicial').value;
-            const horiMetroFinal = document.getElementById('hori_metro_final').value;
-            
-            let houveOcorrencia = '';
+            ids.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) {
+                    data[id] = element.value;
+                } else {
+                    console.warn(`Elemento com ID '${id}' não encontrado.`);
+                    data[id] = '';
+                }
+            });
+
+            data.houveOcorrencia = '';
             if (document.getElementById('ocorrencia_sim').checked) {
-                houveOcorrencia = 'Sim';
+                data.houveOcorrencia = 'Sim';
             } else if (document.getElementById('ocorrencia_nao').checked) {
-                houveOcorrencia = 'Não';
+                data.houveOcorrencia = 'Não';
             }
 
-            const horaChegadaCaminhao = document.getElementById('hora_chegada_caminhao').value;
-            const horaPedidoFertilizante = document.getElementById('hora_pedido_fertilizante').value;
-            const cultura = document.getElementById('cultura').value;
-            const ocorrenciaTexto = document.getElementById('ocorrencia_texto').value;
-            const nomeAssinatura = document.getElementById('nome_assinatura').value;
-            const assinatura = document.getElementById('assinatura').value;
+            return data;
+        }
+
+        enviarRelatorioBtn.addEventListener('click', function(event) {
+            event.preventDefault();
+
+            const data = getFormData();
+
+            // Validação básica dos campos obrigatórios
+            if (!data.cliente || !data.fazenda || !data.data_aplicacao) {
+                alert('Por favor, preencha os campos Cliente, Fazenda e Data de Aplicação.');
+                return;
+            }
+            if (data.houveOcorrencia === 'Sim' && data.ocorrencia_texto.trim() === '') {
+                alert('Por favor, descreva a ocorrência, já que você selecionou "Sim".');
+                return;
+            }
 
             // --- Parte de Geração de PDF ---
             const doc = new jsPDF();
-            let y = 10; // Posição Y inicial para o texto
+            let y = 10;
 
             doc.setFontSize(16);
             doc.text("Relatório de Aplicação Fertilizante Fluido", 105, y, { align: "center" });
@@ -413,114 +427,108 @@
 
             doc.setFontSize(12);
             y += 5;
-            doc.text("--- Dados da Empresa ---", 10, y);
-            y += 7;
-            doc.text(`Empresa: ${empresa}`, 10, y); y += 7;
-            doc.text(`Endereço: ${endereco}`, 10, y); y += 7;
-            doc.text(`Cidade (Empresa): ${cidadeEmpresa}`, 10, y); y += 10;
+            doc.text("--- Dados da Empresa ---", 10, y); y += 7;
+            doc.text(`Empresa: ${data.empresa}`, 10, y); y += 7;
+            doc.text(`Endereço: ${data.endereco}`, 10, y); y += 7;
+            doc.text(`Cidade (Empresa): ${data.cidade_empresa}`, 10, y); y += 10;
 
-            doc.text("--- Dados do Cliente e Aplicação ---", 10, y);
-            y += 7;
-            doc.text(`Cliente: ${cliente || 'Não preenchido'}`, 10, y); y += 7;
-            doc.text(`Fazenda: ${fazenda || 'Não preenchida'}`, 10, y); y += 7;
-            doc.text(`Cidade (Fazenda): ${cidadeFazenda || 'Não preenchida'}`, 10, y); y += 7;
-            doc.text(`Operador: ${operador || 'Não preenchido'}`, 10, y); y += 7;
-            doc.text(`Consultor: ${consultor || 'Não preenchido'}`, 10, y); y += 7;
-            doc.text(`Data Aplicação: ${dataAplicacao || 'Não preenchida'}`, 10, y); y += 7;
-            doc.text(`Nº Pedido: ${nPedido || 'Não preenchido'}`, 10, y); y += 10;
+            doc.text("--- Dados do Cliente e Aplicação ---", 10, y); y += 7;
+            doc.text(`Cliente: ${data.cliente || 'Não preenchido'}`, 10, y); y += 7;
+            doc.text(`Fazenda: ${data.fazenda || 'Não preenchida'}`, 10, y); y += 7;
+            doc.text(`Cidade (Fazenda): ${data.cidade_fazenda || 'Não preenchida'}`, 10, y); y += 7;
+            doc.text(`Operador: ${data.operador || 'Não preenchido'}`, 10, y); y += 7;
+            doc.text(`Consultor: ${data.consultor || 'Não preenchido'}`, 10, y); y += 7;
+            doc.text(`Data Aplicação: ${data.data_aplicacao || 'Não preenchida'}`, 10, y); y += 7;
+            doc.text(`Nº Pedido: ${data.n_pedido || 'Não preenchido'}`, 10, y); y += 10;
 
-            doc.text("--- Descrição da Aplicação ---", 10, y);
-            y += 7;
-            doc.text(`Modelo Equipamento: ${modeloEquipamento || 'Não preenchido'}`, 10, y); y += 7;
-            doc.text(`Talhão: ${talhao || 'Não preenchido'}`, 10, y); y += 7;
-            doc.text(`Há Aplicado: ${haAplicado || 'Não preenchido'}`, 10, y); y += 7;
-            doc.text(`Há Feita: ${haFeita || 'Não preenchido'}`, 10, y); y += 7;
-            doc.text(`Hora Aplicado: ${horaAplicado || 'Não preenchida'}`, 10, y); y += 7;
-            doc.text(`Transpasse: ${transpasse || 'Não preenchido'}`, 10, y); y += 7;
-            doc.text(`Velocidade Média: ${velocidadeMedia || 'Não preenchida'}`, 10, y); y += 7;
-            doc.text(`Kg/ha: ${kgHa || 'Não preenchido'}`, 10, y); y += 7;
-            doc.text(`Hori metro Inicial: ${horiMetroInicial || 'Não preenchido'}`, 10, y); y += 7;
-            doc.text(`Hori metro Final: ${horiMetroFinal || 'Não preenchido'}`, 10, y); y += 7;
-            doc.text(`Houve Ocorrência: ${houveOcorrencia || 'Não preenchido'}`, 10, y); y += 7;
-            doc.text(`Hora Chegada Caminhão: ${horaChegadaCaminhao || 'Não preenchida'}`, 10, y); y += 7;
-            doc.text(`Hora Pedido Fertilizante: ${horaPedidoFertilizante || 'Não preenchida'}`, 10, y); y += 7;
-            doc.text(`Cultura: ${cultura || 'Não preenchida'}`, 10, y); y += 10;
+            doc.text("--- Descrição da Aplicação ---", 10, y); y += 7;
+            doc.text(`Modelo Equipamento: ${data.modelo_equipamento || 'Não preenchido'}`, 10, y); y += 7;
+            doc.text(`Talhão: ${data.talhao || 'Não preenchido'}`, 10, y); y += 7;
+            doc.text(`Há Aplicado: ${data.ha_aplicado || 'Não preenchido'}`, 10, y); y += 7;
+            doc.text(`Há Feita: ${data.ha_feita || 'Não preenchido'}`, 10, y); y += 7;
+            doc.text(`Hora Aplicado: ${data.hora_aplicado || 'Não preenchida'}`, 10, y); y += 7;
+            doc.text(`Transpasse: ${data.transpasse || 'Não preenchido'}`, 10, y); y += 7;
+            doc.text(`Velocidade Média: ${data.velocidade_media || 'Não preenchida'}`, 10, y); y += 7;
+            doc.text(`Kg/ha: ${data.kg_ha || 'Não preenchido'}`, 10, y); y += 7;
+            doc.text(`Hori metro Inicial: ${data.hori_metro_inicial || 'Não preenchido'}`, 10, y); y += 7;
+            doc.text(`Hori metro Final: ${data.hori_metro_final || 'Não preenchido'}`, 10, y); y += 7;
+            doc.text(`Houve Ocorrência: ${data.houveOcorrencia || 'Não preenchido'}`, 10, y); y += 7;
+            doc.text(`Hora Chegada Caminhão: ${data.hora_chegada_caminhao || 'Não preenchida'}`, 10, y); y += 7;
+            doc.text(`Hora Pedido Fertilizante: ${data.hora_pedido_fertilizante || 'Não preenchida'}`, 10, y); y += 7;
+            doc.text(`Cultura: ${data.cultura || 'Não preenchida'}`, 10, y); y += 10;
 
-            if (ocorrenciaTexto.trim() !== '') {
-                doc.text("--- Detalhes da Ocorrência ---", 10, y);
-                y += 7;
-                const splitText = doc.splitTextToSize(ocorrenciaTexto, 180); // 180mm de largura máxima
+            if (data.ocorrencia_texto.trim() !== '') {
+                doc.text("--- Detalhes da Ocorrência ---", 10, y); y += 7;
+                const splitText = doc.splitTextToSize(data.ocorrencia_texto, 180);
                 doc.text(splitText, 10, y);
                 y += (splitText.length * 7) + 10;
             }
 
             // Assinatura
-            doc.text("--- Assinatura ---", 10, y);
-            y += 7;
-            doc.text(`Nome: ${nomeAssinatura || 'Não preenchido'}`, 10, y); y += 7;
-            doc.text(`Assinatura: ${assinatura || 'Não preenchido'}`, 10, y); y += 7;
+            doc.text("--- Assinatura ---", 10, y); y += 7;
+            doc.text(`Nome: ${data.nome_assinatura || 'Não preenchido'}`, 10, y); y += 7;
+            doc.text(`Assinatura: ${data.assinatura || 'Não preenchido'}`, 10, y); y += 7;
             doc.text(`Supervisor de Operações: Evânio Lucas de Oliveira Andrade.`, 10, y); y += 10;
 
-            // Salva o PDF. Isso iniciará o download.
             const dataHoje = new Date().toLocaleDateString('pt-BR').replace(/\//g, '-');
-            const nomeArquivo = `Relatorio_Fertilizante_${dataHoje}_${cliente || 'Sem Cliente'}.pdf`;
+            const nomeArquivo = `Relatorio_Fertilizante_${dataHoje}_${data.cliente || 'Sem Cliente'}.pdf`;
             doc.save(nomeArquivo);
 
             // --- Parte de Envio para WhatsApp (Texto) ---
             let mensagemWhatsApp = `*Relatório de Aplicação Fertilizante Fluido*\n\n`;
             mensagemWhatsApp += `--- Dados da Empresa ---\n`;
-            mensagemWhatsApp += `Empresa: ${empresa}\n`;
-            mensagemWhatsApp += `Endereço: ${endereco}\n`;
-            mensagemWhatsApp += `Cidade (Empresa): ${cidadeEmpresa}\n\n`;
+            mensagemWhatsApp += `Empresa: ${data.empresa}\n`;
+            mensagemWhatsApp += `Endereço: ${data.endereco}\n`;
+            mensagemWhatsApp += `Cidade (Empresa): ${data.cidade_empresa}\n\n`;
             mensagemWhatsApp += `--- Dados do Cliente e Aplicação ---\n`;
-            mensagemWhatsApp += `Cliente: ${cliente || 'Não preenchido'}\n`;
-            mensagemWhatsApp += `Fazenda: ${fazenda || 'Não preenchida'}\n`;
-            mensagemWhatsApp += `Cidade (Fazenda): ${cidadeFazenda || 'Não preenchida'}\n`;
-            mensagemWhatsApp += `Operador: ${operador || 'Não preenchido'}\n`;
-            mensagemWhatsApp += `Consultor: ${consultor || 'Não preenchido'}\n`;
-            mensagemWhatsApp += `Data Aplicação: ${dataAplicacao || 'Não preenchida'}\n`;
-            mensagemWhatsApp += `Nº Pedido: ${nPedido || 'Não preenchido'}\n\n`;
+            mensagemWhatsApp += `Cliente: ${data.cliente || 'Não preenchido'}\n`;
+            mensagemWhatsApp += `Fazenda: ${data.fazenda || 'Não preenchida'}\n`;
+            mensagemWhatsApp += `Cidade (Fazenda): ${data.cidade_fazenda || 'Não preenchida'}\n`;
+            mensagemWhatsApp += `Operador: ${data.operador || 'Não preenchido'}\n`;
+            mensagemWhatsApp += `Consultor: ${data.consultor || 'Não preenchido'}\n`;
+            mensagemWhatsApp += `Data Aplicação: ${data.data_aplicacao || 'Não preenchida'}\n`;
+            mensagemWhatsApp += `Nº Pedido: ${data.n_pedido || 'Não preenchido'}\n\n`;
             mensagemWhatsApp += `--- Descrição da Aplicação ---\n`;
-            mensagemWhatsApp += `Modelo Equipamento: ${modeloEquipamento || 'Não preenchido'}\n`;
-            mensagemWhatsApp += `Talhão: ${talhao || 'Não preenchido'}\n`;
-            mensagemWhatsApp += `Há Aplicado: ${haAplicado || 'Não preenchido'}\n`;
-            mensagemWhatsApp += `Há Feita: ${haFeita || 'Não preenchido'}\n`;
-            mensagemWhatsApp += `Hora Aplicado: ${horaAplicado || 'Não preenchida'}\n`;
-            mensagemWhatsApp += `Transpasse: ${transpasse || 'Não preenchido'}\n`;
-            mensagemWhatsApp += `Velocidade Média: ${velocidadeMedia || 'Não preenchida'}\n`;
-            mensagemWhatsApp += `Kg/ha: ${kgHa || 'Não preenchido'}\n`;
-            mensagemWhatsApp += `Hori metro Inicial: ${horiMetroInicial || 'Não preenchido'}\n`;
-            mensagemWhatsApp += `Hori metro Final: ${horiMetroFinal || 'Não preenchido'}\n`;
-            mensagemWhatsApp += `Houve Ocorrência: ${houveOcorrencia || 'Não preenchido'}\n`;
-            mensagemWhatsApp += `Hora Chegada Caminhão: ${horaChegadaCaminhao || 'Não preenchida'}\n`;
-            mensagemWhatsApp += `Hora Pedido Fertilizante: ${horaPedidoFertilizante || 'Não preenchida'}\n`;
-            mensagemWhatsApp += `Cultura: ${cultura || 'Não preenchida'}\n\n`;
+            mensagemWhatsApp += `Modelo Equipamento: ${data.modelo_equipamento || 'Não preenchido'}\n`;
+            mensagemWhatsApp += `Talhão: ${data.talhao || 'Não preenchido'}\n`;
+            mensagemWhatsApp += `Há Aplicado: ${data.ha_aplicado || 'Não preenchido'}\n`;
+            mensagemWhatsApp += `Há Feita: ${data.ha_feita || 'Não preenchido'}\n`;
+            mensagemWhatsApp += `Hora Aplicado: ${data.hora_aplicado || 'Não preenchida'}\n`;
+            mensagemWhatsApp += `Transpasse: ${data.transpasse || 'Não preenchido'}\n`;
+            mensagemWhatsApp += `Velocidade Média: ${data.velocidade_media || 'Não preenchida'}\n`;
+            mensagemWhatsApp += `Kg/ha: ${data.kg_ha || 'Não preenchido'}\n`;
+            mensagemWhatsApp += `Hori metro Inicial: ${data.hori_metro_inicial || 'Não preenchido'}\n`;
+            mensagemWhatsApp += `Hori metro Final: ${data.hori_metro_final || 'Não preenchido'}\n`;
+            mensagemWhatsApp += `Houve Ocorrência: ${data.houveOcorrencia || 'Não preenchido'}\n`;
+            mensagemWhatsApp += `Hora Chegada Caminhão: ${data.hora_chegada_caminhao || 'Não preenchida'}\n`;
+            mensagemWhatsApp += `Hora Pedido Fertilizante: ${data.hora_pedido_fertilizante || 'Não preenchida'}\n`;
+            mensagemWhatsApp += `Cultura: ${data.cultura || 'Não preenchida'}\n\n`;
 
-            if (ocorrenciaTexto.trim() !== '') {
+            if (data.ocorrencia_texto.trim() !== '') {
                 mensagemWhatsApp += `--- Detalhes da Ocorrência ---\n`;
-                mensagemWhatsApp += `${ocorrenciaTexto}\n\n`;
+                mensagemWhatsApp += `${data.ocorrencia_texto}\n\n`;
             }
             mensagemWhatsApp += `--- Assinatura ---\n`;
-            mensagemWhatsApp += `Nome: ${nomeAssinatura || 'Não preenchido'}\n`;
-            mensagemWhatsApp += `Assinatura: ${assinatura || 'Não preenchido'}\n`;
+            mensagemWhatsApp += `Nome: ${data.nome_assinatura || 'Não preenchido'}\n`;
+            mensagemWhatsApp += `Assinatura: ${data.assinatura || 'Não preenchido'}\n`;
             mensagemWhatsApp += `\nSupervisor de Operações: Evânio Lucas de Oliveira Andrade.`;
 
             const mensagemCodificada = encodeURIComponent(mensagemWhatsApp);
 
-            // ATENÇÃO: SUBSTITUA '5534999422263' PELO NÚMERO DE TELEFONE CORRETO (com código do país e DDD, sem formatação)!
-            const numeroWhatsApp = '5534999422263';
-
+            const numeroWhatsApp = '5534999422263'; // SEU NÚMERO AQUI (com código do país e DDD)
             const whatsappURL = `https://wa.me/${numeroWhatsApp}?text=${mensagemCodificada}`;
             
-            // Abre o WhatsApp em uma nova aba/janela após a geração do PDF
             window.open(whatsappURL, '_blank');
         });
 
-        // NOVO CÓDIGO PARA REGISTRAR O SERVICE WORKER
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                // ATENÇÃO: SUBSTITUA 'relatorio-fertilizante' PELO NOME DO SEU REPOSITÓRIO NO GITHUB!
-                navigator.serviceWorker.register('/Testes/service-worker.js')
+                // Tenta calcular o caminho base para o Service Worker de forma mais robusta
+                // Isso é útil para GitHub Pages, onde o projeto pode estar em uma subpasta
+                const publicPath = new URL(location.href).pathname.replace(/\/[^/]*$/, '/');
+                const serviceWorkerPath = `${publicPath}service-worker.js`;
+
+                navigator.serviceWorker.register(serviceWorkerPath)
                     .then(registration => {
                         console.log('Service Worker registrado com sucesso:', registration.scope);
                     })
@@ -529,7 +537,6 @@
                     });
             });
         }
-        // FIM DO NOVO CÓDIGO DO SERVICE WORKER
     </script>
 </body>
 </html>
