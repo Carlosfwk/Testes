@@ -1,6 +1,6 @@
-const CACHE_NAME = 'fertilizante-relatorio-v1'; // Mude 'v1' para 'v2', 'v3' etc., ao atualizar os arquivos para forçar o cache.
+const CACHE_NAME = 'Testes-v1'; // Mude 'v1' para 'v2', 'v3' etc., ao atualizar os arquivos para forçar o cache.
 // ATENÇÃO: SUBSTITUA '/relatorio-fertilizante/' PELO NOME DO SEU REPOSITÓRIO NO GITHUB!
-const BASE_PATH = '/Testes/'; 
+const BASE_PATH = 'Testes/'; 
 
 const urlsToCache = [
     `${BASE_PATH}`, // A própria raiz do site (que geralmente aponta para index.html)
