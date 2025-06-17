@@ -9,7 +9,7 @@
     <link rel="manifest" href="./manifest.json">
     <meta name="theme-color" content="#007bff"/>
     <style>
-        /* Estilos básicos para o formulário */
+        /* Seus estilos CSS permanecem os mesmos */
         body {
             font-family: Arial, sans-serif;
             margin: 0;
@@ -363,157 +363,197 @@
         </div>
 
         <div class="button-group">
-            <button type="submit" id="enviarRelatorioBtn">Enviar Relatório</button>
+            <button type="submit" id="enviarRelatorioBtn">Gerar e Compartilhar Relatório</button>
         </div>
     </div>
 
-    // ... (código HTML e CSS acima inalterado) ...
+    <script>
+        const { jsPDF } = window.jspdf;
+        const enviarRelatorioBtn = document.getElementById('enviarRelatorioBtn');
 
-<script>
-    const { jsPDF } = window.jspdf;
-    const enviarRelatorioBtn = document.getElementById('enviarRelatorioBtn');
+        function getFormData() {
+            const data = {};
+            const ids = [
+                'empresa', 'endereco', 'cidade_empresa', 'cliente', 'fazenda', 'cidade_fazenda',
+                'operador', 'consultor', 'data_aplicacao', 'n_pedido', 'modelo_equipamento',
+                'talhao', 'ha_aplicado', 'ha_feita', 'hora_aplicado', 'transpasse',
+                'velocidade_media', 'kg_ha', 'hori_metro_inicial', 'hori_metro_final',
+                'cultura', 'ocorrencia_texto', 'nome_assinatura', 'assinatura',
+                'hora_chegada_caminhao', 'hora_pedido_fertilizante'
+            ];
 
-    function getFormData() {
-        // ... (sua função getFormData permanece a mesma) ...
-        const data = {};
-        const ids = [
-            'empresa', 'endereco', 'cidade_empresa', 'cliente', 'fazenda', 'cidade_fazenda',
-            'operador', 'consultor', 'data_aplicacao', 'n_pedido', 'modelo_equipamento',
-            'talhao', 'ha_aplicado', 'ha_feita', 'hora_aplicado', 'transpasse',
-            'velocidade_media', 'kg_ha', 'hori_metro_inicial', 'hori_metro_final',
-            'cultura', 'ocorrencia_texto', 'nome_assinatura', 'assinatura',
-            'hora_chegada_caminhao', 'hora_pedido_fertilizante'
-        ];
+            ids.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) {
+                    data[id] = element.value;
+                } else {
+                    console.warn(`Elemento com ID '${id}' não encontrado.`);
+                    data[id] = '';
+                }
+            });
 
-        ids.forEach(id => {
-            const element = document.getElementById(id);
-            if (element) {
-                data[id] = element.value;
+            data.houveOcorrencia = '';
+            if (document.getElementById('ocorrencia_sim').checked) {
+                data.houveOcorrencia = 'Sim';
+            } else if (document.getElementById('ocorrencia_nao').checked) {
+                data.houveOcorrencia = 'Não';
+            }
+
+            return data;
+        }
+
+        enviarRelatorioBtn.addEventListener('click', async function(event) {
+            event.preventDefault();
+
+            const data = getFormData();
+
+            // Validação básica dos campos obrigatórios
+            if (!data.cliente || !data.fazenda || !data.data_aplicacao) {
+                alert('Por favor, preencha os campos Cliente, Fazenda e Data de Aplicação.');
+                return;
+            }
+            if (data.houveOcorrencia === 'Sim' && data.ocorrencia_texto.trim() === '') {
+                alert('Por favor, descreva a ocorrência, já que você selecionou "Sim".');
+                return;
+            }
+
+            // --- Parte de Geração de PDF ---
+            const doc = new jsPDF();
+            let y = 10;
+
+            doc.setFontSize(16);
+            doc.text("Relatório de Aplicação Fertilizante Fluido", 105, y, { align: "center" });
+            y += 10;
+
+            doc.setFontSize(12);
+            y += 5;
+            doc.text("--- Dados da Empresa ---", 10, y); y += 7;
+            doc.text(`Empresa: ${data.empresa}`, 10, y); y += 7;
+            doc.text(`Endereço: ${data.endereco}`, 10, y); y += 7;
+            doc.text(`Cidade (Empresa): ${data.cidade_empresa}`, 10, y); y += 10;
+
+            doc.text("--- Dados do Cliente e Aplicação ---", 10, y); y += 7;
+            doc.text(`Cliente: ${data.cliente || 'Não preenchido'}`, 10, y); y += 7;
+            doc.text(`Fazenda: ${data.fazenda || 'Não preenchida'}`, 10, y); y += 7;
+            doc.text(`Cidade (Fazenda): ${data.cidade_fazenda || 'Não preenchida'}`, 10, y); y += 7;
+            doc.text(`Operador: ${data.operador || 'Não preenchido'}`, 10, y); y += 7;
+            doc.text(`Consultor: ${data.consultor || 'Não preenchido'}`, 10, y); y += 7;
+            doc.text(`Data Aplicação: ${data.data_aplicacao || 'Não preenchida'}`, 10, y); y += 7;
+            doc.text(`Nº Pedido: ${data.n_pedido || 'Não preenchido'}`, 10, y); y += 10;
+
+            doc.text("--- Descrição da Aplicação ---", 10, y); y += 7;
+            doc.text(`Modelo Equipamento: ${data.modelo_equipamento || 'Não preenchido'}`, 10, y); y += 7;
+            doc.text(`Talhão: ${data.talhao || 'Não preenchido'}`, 10, y); y += 7;
+            doc.text(`Há Aplicado: ${data.ha_aplicado || 'Não preenchido'}`, 10, y); y += 7;
+            doc.text(`Há Feita: ${data.ha_feita || 'Não preenchido'}`, 10, y); y += 7;
+            doc.text(`Hora Aplicado: ${data.hora_aplicado || 'Não preenchida'}`, 10, y); y += 7;
+            doc.text(`Transpasse: ${data.transpasse || 'Não preenchido'}`, 10, y); y += 7;
+            doc.text(`Velocidade Média: ${data.velocidade_media || 'Não preenchida'}`, 10, y); y += 7;
+            doc.text(`Kg/ha: ${data.kg_ha || 'Não preenchido'}`, 10, y); y += 7;
+            doc.text(`Hori metro Inicial: ${data.hori_metro_inicial || 'Não preenchido'}`, 10, y); y += 7;
+            doc.text(`Hori metro Final: ${data.hori_metro_final || 'Não preenchido'}`, 10, y); y += 7;
+            doc.text(`Houve Ocorrência: ${data.houveOcorrencia || 'Não preenchido'}`, 10, y); y += 7;
+            doc.text(`Hora Chegada Caminhão: ${data.hora_chegada_caminhao || 'Não preenchida'}`, 10, y); y += 7;
+            doc.text(`Hora Pedido Fertilizante: ${data.hora_pedido_fertilizante || 'Não preenchida'}`, 10, y); y += 7;
+            doc.text(`Cultura: ${data.cultura || 'Não preenchida'}`, 10, y); y += 10;
+
+            if (data.ocorrencia_texto.trim() !== '') {
+                doc.text("--- Detalhes da Ocorrência ---", 10, y); y += 7;
+                const splitText = doc.splitTextToSize(data.ocorrencia_texto, 180);
+                doc.text(splitText, 10, y);
+                y += (splitText.length * 7) + 10;
+            }
+
+            // Assinatura
+            doc.text("--- Assinatura ---", 10, y); y += 7;
+            doc.text(`Nome: ${data.nome_assinatura || 'Não preenchido'}`, 10, y); y += 7;
+            doc.text(`Assinatura: ${data.assinatura || 'Não preenchido'}`, 10, y); y += 7;
+            doc.text(`Supervisor de Operações: Evânio Lucas de Oliveira Andrade.`, 10, y); y += 10;
+
+            const dataHoje = new Date().toLocaleDateString('pt-BR').replace(/\//g, '-');
+            const nomeArquivo = `Relatorio_Fertilizante_${dataHoje}_${data.cliente || 'Sem Cliente'}.pdf`;
+
+            // Converte o PDF para Blob
+            const pdfBlob = doc.output('blob');
+            const pdfFile = new File([pdfBlob], nomeArquivo, { type: 'application/pdf' });
+
+            // --- Lógica de Compartilhamento ---
+            if (navigator.share && navigator.canShare && navigator.canShare({ files: [pdfFile] })) {
+                // Tenta usar a Web Share API (para arquivos)
+                try {
+                    await navigator.share({
+                        files: [pdfFile],
+                        title: 'Relatório de Aplicação Fertilizante Fluido',
+                        text: `Segue o relatório de aplicação de fertilizante fluido para ${data.cliente || 'o cliente'}.`
+                    });
+                    console.log('PDF compartilhado com sucesso via Web Share API.');
+                } catch (error) {
+                    console.error('Erro ao compartilhar PDF via Web Share API (usuário cancelou ou falha):', error);
+                    // Se falhar (ex: usuário cancela), faz o download e envia a mensagem de texto como fallback
+                    doc.save(nomeArquivo); // Faz o download
+                    sendWhatsAppTextMessage(data, nomeArquivo); // Envia mensagem de texto
+                }
             } else {
-                console.warn(`Elemento com ID '${id}' não encontrado.`);
-                data[id] = '';
+                // Se a Web Share API para arquivos não for suportada
+                console.log('Web Share API para arquivos não suportada neste dispositivo/navegador.');
+                doc.save(nomeArquivo); // Faz o download
+                sendWhatsAppTextMessage(data, nomeArquivo); // Envia mensagem de texto
+                alert('O PDF foi baixado para o seu dispositivo. Por favor, anexe-o manualmente no WhatsApp. Uma mensagem de texto já foi preparada.');
             }
         });
 
-        data.houveOcorrencia = '';
-        if (document.getElementById('ocorrencia_sim').checked) {
-            data.houveOcorrencia = 'Sim';
-        } else if (document.getElementById('ocorrencia_nao').checked) {
-            data.houveOcorrencia = 'Não';
-        }
+        // Nova função para enviar a mensagem de texto via WhatsApp
+        function sendWhatsAppTextMessage(data, fileName) {
+            let mensagemWhatsApp = `*Relatório de Aplicação Fertilizante Fluido*\n\n`;
+            mensagemWhatsApp += `--- Dados da Empresa ---\n`;
+            mensagemWhatsApp += `Empresa: ${data.empresa}\n`;
+            mensagemWhatsApp += `Endereço: ${data.endereco}\n`;
+            mensagemWhatsApp += `Cidade (Empresa): ${data.cidade_empresa}\n\n`;
+            mensagemWhatsApp += `--- Dados do Cliente e Aplicação ---\n`;
+            mensagemWhatsApp += `Cliente: ${data.cliente || 'Não preenchido'}\n`;
+            mensagemWhatsApp += `Fazenda: ${data.fazenda || 'Não preenchida'}\n`;
+            mensagemWhatsApp += `Cidade (Fazenda): ${data.cidade_fazenda || 'Não preenchida'}\n`;
+            mensagemWhatsApp += `Operador: ${data.operador || 'Não preenchido'}\n`;
+            mensagemWhatsApp += `Consultor: ${data.consultor || 'Não preenchido'}\n`;
+            mensagemWhatsApp += `Data Aplicação: ${data.data_aplicacao || 'Não preenchida'}\n`;
+            mensagemWhatsApp += `Nº Pedido: ${data.n_pedido || 'Não preenchido'}\n\n`;
+            mensagemWhatsApp += `--- Descrição da Aplicação ---\n`;
+            mensagemWhatsApp += `Modelo Equipamento: ${data.modelo_equipamento || 'Não preenchido'}\n`;
+            mensagemWhatsApp += `Talhão: ${data.talhao || 'Não preenchido'}\n`;
+            mensagemWhatsApp += `Há Aplicado: ${data.ha_aplicado || 'Não preenchido'}\n`;
+            mensagemWhatsApp += `Há Feita: ${data.ha_feita || 'Não preenchido'}\n`;
+            mensagemWhatsApp += `Hora Aplicado: ${data.hora_aplicado || 'Não preenchida'}\n`;
+            mensagemWhatsApp += `Transpasse: ${data.transpasse || 'Não preenchido'}\n`;
+            mensagemWhatsApp += `Velocidade Média: ${data.velocidade_media || 'Não preenchida'}\n`;
+            mensagemWhatsApp += `Kg/ha: ${data.kg_ha || 'Não preenchido'}\n`;
+            mensagemWhatsApp += `Hori metro Inicial: ${data.hori_metro_inicial || 'Não preenchido'}\n`;
+            mensagemWhatsApp += `Hori metro Final: ${data.hori_metro_final || 'Não preenchido'}\n`;
+            mensagemWhatsApp += `Houve Ocorrência: ${data.houveOcorrencia || 'Não preenchido'}\n`;
+            mensagemWhatsApp += `Hora Chegada Caminhão: ${data.hora_chegada_caminhao || 'Não preenchida'}\n`;
+            mensagemWhatsApp += `Hora Pedido Fertilizante: ${data.hora_pedido_fertilizante || 'Não preenchida'}\n`;
+            mensagemWhatsApp += `Cultura: ${data.cultura || 'Não preenchida'}\n\n`;
 
-        return data;
-    }
-
-    enviarRelatorioBtn.addEventListener('click', async function(event) { // Adicione 'async' aqui
-        event.preventDefault();
-
-        const data = getFormData();
-
-        // Validação básica dos campos obrigatórios
-        if (!data.cliente || !data.fazenda || !data.data_aplicacao) {
-            alert('Por favor, preencha os campos Cliente, Fazenda e Data de Aplicação.');
-            return;
-        }
-        if (data.houveOcorrencia === 'Sim' && data.ocorrencia_texto.trim() === '') {
-            alert('Por favor, descreva a ocorrência, já que você selecionou "Sim".');
-            return;
-        }
-
-        // --- Parte de Geração de PDF (Agora geramos um Blob) ---
-        const doc = new jsPDF();
-        let y = 10;
-
-        doc.setFontSize(16);
-        doc.text("Relatório de Aplicação Fertilizante Fluido", 105, y, { align: "center" });
-        y += 10;
-
-        doc.setFontSize(12);
-        y += 5;
-        doc.text("--- Dados da Empresa ---", 10, y); y += 7;
-        doc.text(`Empresa: ${data.empresa}`, 10, y); y += 7;
-        doc.text(`Endereço: ${data.endereco}`, 10, y); y += 7;
-        doc.text(`Cidade (Empresa): ${data.cidade_empresa}`, 10, y); y += 10;
-
-        doc.text("--- Dados do Cliente e Aplicação ---", 10, y); y += 7;
-        doc.text(`Cliente: ${data.cliente || 'Não preenchido'}`, 10, y); y += 7;
-        doc.text(`Fazenda: ${data.fazenda || 'Não preenchida'}`, 10, y); y += 7;
-        doc.text(`Cidade (Fazenda): ${data.cidade_fazenda || 'Não preenchida'}`, 10, y); y += 7;
-        doc.text(`Operador: ${data.operador || 'Não preenchido'}`, 10, y); y += 7;
-        doc.text(`Consultor: ${data.consultor || 'Não preenchido'}`, 10, y); y += 7;
-        doc.text(`Data Aplicação: ${data.data_aplicacao || 'Não preenchida'}`, 10, y); y += 7;
-        doc.text(`Nº Pedido: ${data.n_pedido || 'Não preenchido'}`, 10, y); y += 10;
-
-        doc.text("--- Descrição da Aplicação ---", 10, y); y += 7;
-        doc.text(`Modelo Equipamento: ${data.modelo_equipamento || 'Não preenchido'}`, 10, y); y += 7;
-        doc.text(`Talhão: ${data.talhao || 'Não preenchido'}`, 10, y); y += 7;
-        doc.text(`Há Aplicado: ${data.ha_aplicado || 'Não preenchido'}`, 10, y); y += 7;
-        doc.text(`Há Feita: ${data.ha_feita || 'Não preenchido'}`, 10, y); y += 7;
-        doc.text(`Hora Aplicado: ${data.hora_aplicado || 'Não preenchida'}`, 10, y); y += 7;
-        doc.text(`Transpasse: ${data.transpasse || 'Não preenchido'}`, 10, y); y += 7;
-        doc.text(`Velocidade Média: ${data.velocidade_media || 'Não preenchida'}`, 10, y); y += 7;
-        doc.text(`Kg/ha: ${data.kg_ha || 'Não preenchido'}`, 10, y); y += 7;
-        doc.text(`Hori metro Inicial: ${data.hori_metro_inicial || 'Não preenchido'}`, 10, y); y += 7;
-        doc.text(`Hori metro Final: ${data.hori_metro_final || 'Não preenchido'}`, 10, y); y += 7;
-        doc.text(`Houve Ocorrência: ${data.houveOcorrencia || 'Não preenchido'}`, 10, y); y += 7;
-        doc.text(`Hora Chegada Caminhão: ${data.hora_chegada_caminhao || 'Não preenchida'}`, 10, y); y += 7;
-        doc.text(`Hora Pedido Fertilizante: ${data.hora_pedido_fertilizante || 'Não preenchida'}`, 10, y); y += 7;
-        doc.text(`Cultura: ${data.cultura || 'Não preenchida'}`, 10, y); y += 10;
-
-        if (data.ocorrencia_texto.trim() !== '') {
-            doc.text("--- Detalhes da Ocorrência ---", 10, y); y += 7;
-            const splitText = doc.splitTextToSize(data.ocorrencia_texto, 180);
-            doc.text(splitText, 10, y);
-            y += (splitText.length * 7) + 10;
-        }
-
-        // Assinatura
-        doc.text("--- Assinatura ---", 10, y); y += 7;
-        doc.text(`Nome: ${data.nome_assinatura || 'Não preenchido'}`, 10, y); y += 7;
-        doc.text(`Assinatura: ${data.assinatura || 'Não preenchido'}`, 10, y); y += 7;
-        doc.text(`Supervisor de Operações: Evânio Lucas de Oliveira Andrade.`, 10, y); y += 10;
-
-        const dataHoje = new Date().toLocaleDateString('pt-BR').replace(/\//g, '-');
-        const nomeArquivo = `Relatorio_Fertilizante_${dataHoje}_${data.cliente || 'Sem Cliente'}.pdf`;
-
-        // Converte o PDF para Blob
-        const pdfBlob = doc.output('blob');
-
-        // --- Lógica de Compartilhamento ou Download ---
-        if (navigator.share && navigator.canShare && navigator.canShare({ files: [new File([pdfBlob], nomeArquivo, { type: 'application/pdf' })] })) {
-            // Tenta usar a Web Share API (para arquivos)
-            try {
-                await navigator.share({
-                    files: [new File([pdfBlob], nomeArquivo, { type: 'application/pdf' })],
-                    title: 'Relatório de Aplicação Fertilizante Fluido',
-                    text: `Segue o relatório de aplicação de fertilizante fluido para ${data.cliente || 'o cliente'}.`
-                });
-                console.log('PDF compartilhado com sucesso via Web Share API.');
-            } catch (error) {
-                // Se o compartilhamento falhar (usuário cancelou, etc.), faz o download como fallback
-                console.error('Erro ao compartilhar PDF via Web Share API:', error);
-                doc.save(nomeArquivo);
+            if (data.ocorrencia_texto.trim() !== '') {
+                mensagemWhatsApp += `--- Detalhes da Ocorrência ---\n`;
+                mensagemWhatsApp += `${data.ocorrencia_texto}\n\n`;
             }
-        } else {
-            // Se a Web Share API não for suportada, faz o download direto
-            doc.save(nomeArquivo);
-            console.log('Web Share API para arquivos não suportada. PDF baixado.');
+            mensagemWhatsApp += `--- Assinatura ---\n`;
+            mensagemWhatsApp += `Nome: ${data.nome_assinatura || 'Não preenchido'}\n`;
+            mensagemWhatsApp += `Assinatura: ${data.assinatura || 'Não preenchido'}\n`;
+            mensagemWhatsApp += `\nSupervisor de Operações: Evânio Lucas de Oliveira Andrade.`;
 
-            // Opcional: Aqui você pode ainda oferecer a opção de mensagem de WhatsApp como fallback de texto
-            // Se o objetivo é *sempre* compartilhar o PDF e só texto se for o único jeito, remova o bloco abaixo
-            // se o download já for suficiente.
-            // Se o usuário clicar para enviar o PDF e não funcionar o share, talvez ele queira a mensagem.
-            // Para simplicidade, vamos remover o envio de mensagem direta se o PDF for baixado.
-            // Se você quiser manter a mensagem como uma *segunda* opção, pode reativar.
+            // Adiciona uma pequena instrução sobre o arquivo baixado
+            mensagemWhatsApp += `\n\n_O arquivo PDF "${fileName}" foi baixado. Por favor, anexe-o nesta conversa._`;
+
+            const mensagemCodificada = encodeURIComponent(mensagemWhatsApp);
+            const numeroWhatsApp = '5534999422263'; // SEU NÚMERO AQUI (com código do país e DDD)
+            const whatsappURL = `https://wa.me/${numeroWhatsApp}?text=${mensagemCodificada}`;
+            
+            window.open(whatsappURL, '_blank');
         }
 
-        // Remover a chamada antiga do WhatsApp URL que enviava apenas texto
-        // const mensagemCodificada = encodeURIComponent(mensagemWhatsApp);
-        // const numeroWhatsApp = '5534999422263';
-        // const whatsappURL = `https://wa.me/${numeroWhatsApp}?text=${mensagemCodificada}`;
-        // window.open(whatsappURL, '_blank');
-    });
 
+        // --- CÓDIGO DO SERVICE WORKER (MESMO DO ANTERIOR, CRÍTICO PARA OFFLINE) ---
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 // Tenta calcular o caminho base para o Service Worker de forma mais robusta
