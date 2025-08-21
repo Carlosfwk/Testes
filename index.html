@@ -209,230 +209,210 @@
 <body>
     <div class="container">
         <h1>Relatório de Aplicação Fertilizante Fluido.</h1>
-        <div class="section">
-            <div class="form-group">
-                <label for="empresa">Empresa:</label>
-                <input type="text" id="empresa" name="empresa" value="Terrena Agronegócios Ltda." readonly>
-            </div>
-            <div class="form-group">
-                <label for="endereco">Endereço:</label>
-                <input type="text" id="endereco" name="endereco" value="Av. Rodrigo C. Avellar 1416. Bairro: Distrito Industrial." readonly>
-            </div>
-            <div class="form-group">
-                <label for="cidade_empresa">Cidade:</label>
-                <input type="text" id="cidade_empresa" name="cidade_empresa" value="Patos de Minas MG CEP: 38706-706" readonly>
-            </div>
-        </div>
-        <div class="section">
-            <div class="form-group">
-                <label for="cliente">Cliente:</label>
-                <input type="text" id="cliente" name="cliente" required>
-            </div>
-            <div class="form-group inline-fields">
-                <div class="field-pair">
-                    <label for="fazenda">Fazenda:</label>
-                    <input type="text" id="fazenda" name="fazenda" required>
+        <form id="relatorioForm">
+            <div class="section">
+                <div class="form-group">
+                    <label for="empresa">Empresa:</label>
+                    <input type="text" id="empresa" name="empresa" value="Terrena Agronegócios Ltda." readonly>
                 </div>
-                <div class="field-pair">
-                    <label for="cidade_fazenda">Cidade:</label>
-                    <input type="text" id="cidade_fazenda" name="cidade_fazenda" required>
+                <div class="form-group">
+                    <label for="endereco">Endereço:</label>
+                    <input type="text" id="endereco" name="endereco" value="Av. Rodrigo C. Avellar 1416. Bairro: Distrito Industrial." readonly>
+                </div>
+                <div class="form-group">
+                    <label for="cidade_empresa">Cidade:</label>
+                    <input type="text" id="cidade_empresa" name="cidade_empresa" value="Patos de Minas MG CEP: 38706-706" readonly>
                 </div>
             </div>
-            <div class="form-group inline-fields">
-                <div class="field-pair">
-                    <label for="operador">Operador:</label>
-                    <input type="text" id="operador" name="operador" required>
+            <div class="section">
+                <div class="form-group">
+                    <label for="cliente">Cliente:</label>
+                    <input type="text" id="cliente" name="cliente" required>
+                </div>
+                <div class="form-group inline-fields">
+                    <div class="field-pair">
+                        <label for="fazenda">Fazenda:</label>
+                        <input type="text" id="fazenda" name="fazenda" required>
+                    </div>
+                    <div class="field-pair">
+                        <label for="cidade_fazenda">Cidade:</label>
+                        <input type="text" id="cidade_fazenda" name="cidade_fazenda" required>
+                    </div>
+                </div>
+                <div class="form-group inline-fields">
+                    <div class="field-pair">
+                        <label for="operador">Operador:</label>
+                        <input type="text" id="operador" name="operador" required>
+                    </div>
+                </div>
+                <div class="form-group inline-fields">
+                    <div class="field-pair">
+                        <label for="data_aplicacao">Data Aplicação:</label>
+                        <input type="date" id="data_aplicacao" name="data_aplicacao" required>
+                    </div>
+                    <div class="field-pair">
+                        <label for="n_pedido">Nº Pedido:</label>
+                        <input type="text" id="n_pedido" name="n_pedido" required>
+                    </div>
                 </div>
             </div>
-            <div class="form-group inline-fields">
-                <div class="field-pair">
-                    <label for="data_aplicacao">Data Aplicação:</label>
-                    <input type="date" id="data_aplicacao" name="data_aplicacao" required>
+            <div class="section">
+                <h2 class="section-title">Descrição da Aplicação.</h2>
+                <div class="form-group">
+                    <label for="modelo_equipamento">Modelo do Equipamento:</label>
+                    <input type="text" id="modelo_equipamento" name="modelo_equipamento" required>
                 </div>
-                <div class="field-pair">
-                    <label for="n_pedido">Nº Pedido:</label>
-                    <input type="text" id="n_pedido" name="n_pedido" required>
+                <div class="form-group">
+                    <label for="talhao">Talhão:</label>
+                    <input type="text" id="talhao" name="talhao" required>
                 </div>
-            </div>
-        </div>
-        <div class="section">
-            <h2 class="section-title">Descrição da Aplicação.</h2>
-            <div class="form-group">
-                <label for="modelo_equipamento">Modelo do Equipamento:</label>
-                <input type="text" id="modelo_equipamento" name="modelo_equipamento" required>
-            </div>
-            <div class="form-group">
-                <label for="talhao">Talhão:</label>
-                <input type="text" id="talhao" name="talhao" required>
-            </div>
-            <div class="form-group inline-fields">
-                <div class="field-pair">
-                    <label for="ha_aplicado">Há Aplicado:</label>
-                    <input type="number" id="ha_aplicado" name="ha_aplicado" step="0.01" required>
+                <div class="form-group inline-fields">
+                    <div class="field-pair">
+                        <label for="ha_aplicado">Há Aplicado:</label>
+                        <input type="number" id="ha_aplicado" name="ha_aplicado" step="0.01" required>
+                    </div>
+                    <div class="field-pair">
+                        <label for="ha_feita">Há Feita:</label>
+                        <input type="number" id="ha_feita" name="ha_feita" step="0.01" required>
+                    </div>
                 </div>
-                <div class="field-pair">
-                    <label for="ha_feita">Há Feita:</label>
-                    <input type="number" id="ha_feita" name="ha_feita" step="0.01" required>
+                <div class="form-group inline-fields">
+                    <div class="field-pair">
+                        <label for="hora_aplicado">Hora Aplicado:</label>
+                        <input type="time" id="hora_aplicado" name="hora_aplicado" required>
+                    </div>
+                    <div class="field-pair">
+                        <label for="transpasse">Transpasse:</label>
+                        <input type="text" id="transpasse" name="transpasse" required>
+                    </div>
                 </div>
-            </div>
-            <div class="form-group inline-fields">
-                <div class="field-pair">
-                    <label for="hora_aplicado">Hora Aplicado:</label>
-                    <input type="time" id="hora_aplicado" name="hora_aplicado" required>
+                <div class="form-group inline-fields">
+                    <div class="field-pair">
+                        <label for="velocidade_media">Velocidade Média:</label>
+                        <input type="number" id="velocidade_media" name="velocidade_media" step="0.01" required>
+                    </div>
+                    <div class="field-pair">
+                        <label for="kg_ha">Kg/ha:</label>
+                        <input type="number" id="kg_ha" name="kg_ha" step="0.01" required>
+                    </div>
                 </div>
-                <div class="field-pair">
-                    <label for="transpasse">Transpasse:</label>
-                    <input type="text" id="transpasse" name="transpasse" required>
+                <div class="form-group">
+                    <label>Houve Ocorrência:</label>
+                    <div class="radio-group">
+                        <input type="radio" id="ocorrencia_sim" name="ocorrencia" value="Sim" required>
+                        <label for="ocorrencia_sim">Sim</label>
+                        <input type="radio" id="ocorrencia_nao" name="ocorrencia" value="Não">
+                        <label for="ocorrencia_nao">Não</label>
+                    </div>
                 </div>
-            </div>
-            <div class="form-group inline-fields">
-                <div class="field-pair">
-                    <label for="velocidade_media">Velocidade Média:</label>
-                    <input type="number" id="velocidade_media" name="velocidade_media" step="0.01" required>
-                </div>
-                <div class="field-pair">
-                    <label for="kg_ha">Kg/ha:</label>
-                    <input type="number" id="kg_ha" name="kg_ha" step="0.01" required>
-                </div>
-            </div>
-            <div class="form-group">
-                <label>Houve Ocorrência:</label>
-                <div class="radio-group">
-                    <input type="radio" id="ocorrencia_sim" name="ocorrencia" value="Sim" required>
-                    <label for="ocorrencia_sim">Sim</label>
-                    <input type="radio" id="ocorrencia_nao" name="ocorrencia" value="Não">
-                    <label for="ocorrencia_nao">Não</label>
+                <div class="form-group">
+                    <label for="cultura">Cultura:</label>
+                    <input type="text" id="cultura" name="cultura" required>
                 </div>
             </div>
-            <div class="form-group">
-                <label for="cultura">Cultura:</label>
-                <input type="text" id="cultura" name="cultura" required>
+            <div class="section">
+                <label for="ocorrencia_texto">Descrição da Ocorrência:</label>
+                <textarea id="ocorrencia_texto" name="ocorrencia_texto" rows="5"></textarea>
             </div>
-        </div>
-        <div class="section">
-            <label for="ocorrencia_texto">Descrição da Ocorrência:</label>
-            <textarea id="ocorrencia_texto" name="ocorrencia_texto" rows="5"></textarea>
-        </div>
-        <div class="signature-section">
-            <div class="form-group">
-                <label for="nome_assinatura">Nome:</label>
-                <input type="text" id="nome_assinatura" name="nome_assinatura" required>
+            <div class="signature-section">
+                <div class="form-group">
+                    <label for="nome_assinatura">Nome:</label>
+                    <input type="text" id="nome_assinatura" name="nome_assinatura" required>
+                </div>
+                <div class="form-group">
+                    <label for="assinatura">Assinatura:</label>
+                    <input type="text" id="assinatura" name="assinatura" placeholder="Assine aqui, ou deixe para impressão." required>
+                </div>
             </div>
-            <div class="form-group">
-                <label for="assinatura">Assinatura:</label>
-                <input type="text" id="assinatura" name="assinatura" placeholder="Assine aqui, ou deixe para impressão." required>
+            <div class="button-group">
+                <button type="submit" id="enviarRelatorioBtn">Gerar e Compartilhar Relatório</button>
             </div>
-        </div>
-        <div class="button-group">
-            <button type="submit" id="enviarRelatorioBtn">Gerar e Compartilhar Relatório</button>
-        </div>
+        </form>
     </div>
     <script>
         const { jsPDF } = window.jspdf;
-        const enviarRelatorioBtn = document.getElementById('enviarRelatorioBtn');
-        const form = document.querySelector('.container');
+        const form = document.getElementById('relatorioForm');
 
         form.addEventListener('submit', async function(event) {
             event.preventDefault(); // Impede o envio padrão do formulário
 
-            const data = getFormData();
-            
-            // Validação final de campos obrigatórios
-            const camposObrigatorios = [
-                'cliente', 'fazenda', 'cidade_fazenda', 'operador', 'data_aplicacao',
-                'n_pedido', 'modelo_equipamento', 'talhao', 'ha_aplicado', 'ha_feita',
-                'hora_aplicado', 'transpasse', 'velocidade_media', 'kg_ha', 'cultura',
-                'nome_assinatura', 'assinatura'
-            ];
-            
-            for (const campo of camposObrigatorios) {
-                if (!data[campo] || (campo === 'ocorrencia_texto' && data.houveOcorrencia === 'Sim' && !data[campo])) {
-                    alert('Por favor, preencha todos os campos obrigatórios.');
-                    // Foca no campo que está faltando para o usuário
-                    document.getElementById(campo).focus();
-                    return; // Interrompe a função se a validação falhar
+            if (form.checkValidity()) {
+                const data = getFormData();
+                
+                // Validação adicional para a descrição da ocorrência
+                if (data.houveOcorrencia === 'Sim' && data.ocorrencia_texto.trim() === '') {
+                    alert('Você selecionou "Sim" para ocorrência. Por favor, preencha a descrição.');
+                    document.getElementById('ocorrencia_texto').focus();
+                    return;
                 }
-            }
-            
-            // Validação do campo de rádio 'Houve Ocorrência'
-            const radioOcorrencia = document.querySelector('input[name="ocorrencia"]:checked');
-            if (!radioOcorrencia) {
-                alert('Por favor, selecione se houve uma ocorrência.');
-                document.getElementById('ocorrencia_sim').focus();
-                return;
-            }
-
-            // Validação da descrição da ocorrência se "Sim" for selecionado
-            if (data.houveOcorrencia === 'Sim' && data.ocorrencia_texto.trim() === '') {
-                alert('Você selecionou "Sim" para ocorrência. Por favor, preencha a descrição.');
-                document.getElementById('ocorrencia_texto').focus();
-                return;
-            }
-
-            // Se a validação passou, continua com a geração do PDF
-            const doc = new jsPDF();
-            let y = 10;
-            doc.setFontSize(16);
-            doc.text("Relatório de Aplicação Fertilizante Fluido", 105, y, { align: "center" });
-            y += 10;
-            doc.setFontSize(12);
-            y += 5;
-            doc.text("--- Dados da Empresa ---", 10, y); y += 7;
-            doc.text(`Empresa: ${data.empresa}`, 10, y); y += 7;
-            doc.text(`Endereço: ${data.endereco}`, 10, y); y += 7;
-            doc.text(`Cidade (Empresa): ${data.cidade_empresa}`, 10, y); y += 10;
-            doc.text("--- Dados do Cliente e Aplicação ---", 10, y); y += 7;
-            doc.text(`Cliente: ${data.cliente}`, 10, y); y += 7;
-            doc.text(`Fazenda: ${data.fazenda}`, 10, y); y += 7;
-            doc.text(`Cidade (Fazenda): ${data.cidade_fazenda}`, 10, y); y += 7;
-            doc.text(`Operador: ${data.operador}`, 10, y); y += 7;
-            doc.text(`Data Aplicação: ${data.data_aplicacao}`, 10, y); y += 7;
-            doc.text(`Nº Pedido: ${data.n_pedido}`, 10, y); y += 10;
-            doc.text("--- Descrição da Aplicação ---", 10, y); y += 7;
-            doc.text(`Modelo Equipamento: ${data.modelo_equipamento}`, 10, y); y += 7;
-            doc.text(`Talhão: ${data.talhao}`, 10, y); y += 7;
-            doc.text(`Há Aplicado: ${data.ha_aplicado}`, 10, y); y += 7;
-            doc.text(`Há Feita: ${data.ha_feita}`, 10, y); y += 7;
-            doc.text(`Hora Aplicado: ${data.hora_aplicado}`, 10, y); y += 7;
-            doc.text(`Transpasse: ${data.transpasse}`, 10, y); y += 7;
-            doc.text(`Velocidade Média: ${data.velocidade_media}`, 10, y); y += 7;
-            doc.text(`Kg/ha: ${data.kg_ha}`, 10, y); y += 7;
-            doc.text(`Houve Ocorrência: ${data.houveOcorrencia}`, 10, y); y += 7;
-            doc.text(`Cultura: ${data.cultura}`, 10, y); y += 10;
-            
-            if (data.ocorrencia_texto.trim() !== '') {
-                doc.text("--- Detalhes da Ocorrência ---", 10, y); y += 7;
-                const splitText = doc.splitTextToSize(data.ocorrencia_texto, 180);
-                doc.text(splitText, 10, y);
-                y += (splitText.length * 7) + 10;
-            }
-            doc.text("--- Assinatura ---", 10, y); y += 7;
-            doc.text(`Nome: ${data.nome_assinatura}`, 10, y); y += 7;
-            doc.text(`Assinatura: ${data.assinatura}`, 10, y); y += 7;
-            
-            const dataHoje = new Date().toLocaleDateString('pt-BR').replace(/\//g, '-');
-            const nomeArquivo = `Relatorio_Fertilizante_${dataHoje}_${data.cliente || 'Sem Cliente'}.pdf`;
-            const pdfBlob = doc.output('blob');
-            const pdfFile = new File([pdfBlob], nomeArquivo, { type: 'application/pdf' });
-            
-            if (navigator.share && navigator.canShare && navigator.canShare({ files: [pdfFile] })) {
-                try {
-                    await navigator.share({
-                        files: [pdfFile],
-                        title: 'Relatório de Aplicação Fertilizante Fluido',
-                        text: `Segue o relatório de aplicação de fertilizante fluido para ${data.cliente || 'o cliente'}.`
-                    });
-                    console.log('PDF compartilhado com sucesso via Web Share API.');
-                } catch (error) {
-                    console.error('Erro ao compartilhar PDF via Web Share API (usuário cancelou ou falha):', error);
+                
+                // Se todas as validações passarem, continua com a geração do PDF
+                const doc = new jsPDF();
+                let y = 10;
+                doc.setFontSize(16);
+                doc.text("Relatório de Aplicação Fertilizante Fluido", 105, y, { align: "center" });
+                y += 10;
+                doc.setFontSize(12);
+                y += 5;
+                doc.text("--- Dados da Empresa ---", 10, y); y += 7;
+                doc.text(`Empresa: ${data.empresa}`, 10, y); y += 7;
+                doc.text(`Endereço: ${data.endereco}`, 10, y); y += 7;
+                doc.text(`Cidade (Empresa): ${data.cidade_empresa}`, 10, y); y += 10;
+                doc.text("--- Dados do Cliente e Aplicação ---", 10, y); y += 7;
+                doc.text(`Cliente: ${data.cliente}`, 10, y); y += 7;
+                doc.text(`Fazenda: ${data.fazenda}`, 10, y); y += 7;
+                doc.text(`Cidade (Fazenda): ${data.cidade_fazenda}`, 10, y); y += 7;
+                doc.text(`Operador: ${data.operador}`, 10, y); y += 7;
+                doc.text(`Data Aplicação: ${data.data_aplicacao}`, 10, y); y += 7;
+                doc.text(`Nº Pedido: ${data.n_pedido}`, 10, y); y += 10;
+                doc.text("--- Descrição da Aplicação ---", 10, y); y += 7;
+                doc.text(`Modelo Equipamento: ${data.modelo_equipamento}`, 10, y); y += 7;
+                doc.text(`Talhão: ${data.talhao}`, 10, y); y += 7;
+                doc.text(`Há Aplicado: ${data.ha_aplicado}`, 10, y); y += 7;
+                doc.text(`Há Feita: ${data.ha_feita}`, 10, y); y += 7;
+                doc.text(`Hora Aplicado: ${data.hora_aplicado}`, 10, y); y += 7;
+                doc.text(`Transpasse: ${data.transpasse}`, 10, y); y += 7;
+                doc.text(`Velocidade Média: ${data.velocidade_media}`, 10, y); y += 7;
+                doc.text(`Kg/ha: ${data.kg_ha}`, 10, y); y += 7;
+                doc.text(`Houve Ocorrência: ${data.houveOcorrencia}`, 10, y); y += 7;
+                doc.text(`Cultura: ${data.cultura}`, 10, y); y += 10;
+                
+                if (data.ocorrencia_texto.trim() !== '') {
+                    doc.text("--- Detalhes da Ocorrência ---", 10, y); y += 7;
+                    const splitText = doc.splitTextToSize(data.ocorrencia_texto, 180);
+                    doc.text(splitText, 10, y);
+                    y += (splitText.length * 7) + 10;
+                }
+                doc.text("--- Assinatura ---", 10, y); y += 7;
+                doc.text(`Nome: ${data.nome_assinatura}`, 10, y); y += 7;
+                doc.text(`Assinatura: ${data.assinatura}`, 10, y); y += 7;
+                
+                const dataHoje = new Date().toLocaleDateString('pt-BR').replace(/\//g, '-');
+                const nomeArquivo = `Relatorio_Fertilizante_${dataHoje}_${data.cliente || 'Sem Cliente'}.pdf`;
+                const pdfBlob = doc.output('blob');
+                const pdfFile = new File([pdfBlob], nomeArquivo, { type: 'application/pdf' });
+                
+                if (navigator.share && navigator.canShare && navigator.canShare({ files: [pdfFile] })) {
+                    try {
+                        await navigator.share({
+                            files: [pdfFile],
+                            title: 'Relatório de Aplicação Fertilizante Fluido',
+                            text: `Segue o relatório de aplicação de fertilizante fluido para ${data.cliente || 'o cliente'}.`
+                        });
+                        console.log('PDF compartilhado com sucesso via Web Share API.');
+                    } catch (error) {
+                        console.error('Erro ao compartilhar PDF via Web Share API (usuário cancelou ou falha):', error);
+                        doc.save(nomeArquivo);
+                        sendWhatsAppTextMessage(data, nomeArquivo);
+                    }
+                } else {
+                    console.log('Web Share API para arquivos não suportada neste dispositivo/navegador.');
                     doc.save(nomeArquivo);
                     sendWhatsAppTextMessage(data, nomeArquivo);
+                    alert('O PDF foi baixado para o seu dispositivo. Por favor, anexe-o manualmente no WhatsApp. Uma mensagem de texto já foi preparada.');
                 }
             } else {
-                console.log('Web Share API para arquivos não suportada neste dispositivo/navegador.');
-                doc.save(nomeArquivo);
-                sendWhatsAppTextMessage(data, nomeArquivo);
-                alert('O PDF foi baixado para o seu dispositivo. Por favor, anexe-o manualmente no WhatsApp. Uma mensagem de texto já foi preparada.');
+                alert('Por favor, preencha todos os campos obrigatórios.');
             }
         });
 
@@ -451,10 +431,9 @@
                 }
             });
             data.houveOcorrencia = '';
-            if (document.getElementById('ocorrencia_sim').checked) {
-                data.houveOcorrencia = 'Sim';
-            } else if (document.getElementById('ocorrencia_nao').checked) {
-                data.houveOcorrencia = 'Não';
+            const radioOcorrencia = document.querySelector('input[name="ocorrencia"]:checked');
+            if (radioOcorrencia) {
+                data.houveOcorrencia = radioOcorrencia.value;
             }
             return data;
         }
@@ -476,7 +455,7 @@
             mensagemWhatsApp += `Modelo Equipamento: ${data.modelo_equipamento || 'Não preenchido'}\n`;
             mensagemWhatsApp += `Talhão: ${data.talhao || 'Não preenchido'}\n`;
             mensagemWhatsApp += `Há Aplicado: ${data.ha_aplicado || 'Não preenchido'}\n`;
-            mensagemWhatsApp += `Há Feita: ${data.ha_feita || 'Não preenchido'}\n`;
+            mensagemWhatsApp += `Há Feita: ${data.ha_feita || 'Não preenchida'}\n`;
             mensagemWhatsApp += `Hora Aplicado: ${data.hora_aplicado || 'Não preenchida'}\n`;
             mensagemWhatsApp += `Transpasse: ${data.transpasse || 'Não preenchido'}\n`;
             mensagemWhatsApp += `Velocidade Média: ${data.velocidade_media || 'Não preenchida'}\n`;
