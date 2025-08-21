@@ -436,7 +436,6 @@
             doc.text("--- Assinatura ---", 10, y); y += 7;
             doc.text(`Nome: ${data.nome_assinatura || 'Não preenchido'}`, 10, y); y += 7;
             doc.text(`Assinatura: ${data.assinatura || 'Não preenchido'}`, 10, y); y += 7;
-            doc.text(`Supervisor de Operações: Evânio Lucas de Oliveira Andrade.`, 10, y); y += 10;
 
             const dataHoje = new Date().toLocaleDateString('pt-BR').replace(/\//g, '-');
             const nomeArquivo = `Relatorio_Fertilizante_${dataHoje}_${data.cliente || 'Sem Cliente'}.pdf`;
@@ -503,7 +502,6 @@
             mensagemWhatsApp += `--- Assinatura ---\n`;
             mensagemWhatsApp += `Nome: ${data.nome_assinatura || 'Não preenchido'}\n`;
             mensagemWhatsApp += `Assinatura: ${data.assinatura || 'Não preenchido'}\n`;
-            mensagemWhatsApp += `\nSupervisor de Operações: Evânio Lucas de Oliveira Andrade.`;
 
             // Adiciona uma pequena instrução sobre o arquivo baixado
             mensagemWhatsApp += `\n\n_O arquivo PDF "${fileName}" foi baixado. Por favor, anexe-o nesta conversa._`;
